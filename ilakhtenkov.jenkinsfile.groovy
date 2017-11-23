@@ -12,7 +12,7 @@ node {
         }
         catch (Exception error){
             println("PREPARATION Failed")
-            //throw error
+            throw error
         }
     }
     stage('BUILD') {
@@ -26,7 +26,7 @@ node {
     }
     stage('TEST') {
         try {
-            parallel {
+            parallel: {
                 node {
                     sh "gradle test"
                 }
@@ -55,3 +55,12 @@ def build (){
     rtGradle.resolver repo:'remote-repos', server: server
     buildInfo = rtGradle.run rootDir: "/", buildFile: 'build.gradle', tasks: 'clean build'
 }
+
+/*def notifySlack(text, channel) {
+    def slackURL = 'https://slack.com/api/rtm.'
+    def payload = JsonOutput.toJson([text      : text,
+                                     channel   : channel,
+                                     username  : "jenkins",
+                                     icon_emoji: ":jenkins:"])
+    sh "curl -X POST --data-urlencode \'payload=${payload}\' ${slackURL}"
+}*/

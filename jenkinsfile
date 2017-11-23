@@ -25,4 +25,10 @@ stage('Triggering job'){
  build job: 'MNTLAB-alubouski-child1-build-job', parameters: [string(name: 'BRANCH_NAME', value: 'alubouski')]
  sh "cp $JENKINS_HOME/workspace/MNTLAB-alubouski-child1-build-job/alubouski_dsl_script.tar.gz $JENKINS_HOME/workspace/Pipeline-job1/"
  }
+
+stage('Packaging and Publishing results'){
+  sh "tar -zxvf alubouski_dsl_script.tar.gz"   
+  sh "tar -zcvf pipeline-alubouski-'$BUILD_NUMBER'.tar.gz $JENKINS_HOME/workspace/Pipeline-job1/dsl.groovy $JENKINS_HOME/workspace/Pipeline-job1/jenkinsfile $JENKINS_HOME/workspace/Pipeline-job1/build/libs/gradle-simple.jar"
+     
+ }
 }

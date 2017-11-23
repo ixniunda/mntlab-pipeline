@@ -22,7 +22,7 @@ checkout([$class: 'GitSCM', branches: [[name: BRANCH_NAME]], doGenerateSubmodule
     }
     stage('Triggering job and fetching artefact after finishing'){
         def job = build job: 'EPBYMINW2467/MNTLAB-uhramovich-child1-build-job' ,parameters: [string(name: 'BRANCH_NAME', value: 'uhramovich')]
-        sh "cp $JENKINS_HOME/workspace/EPBYMINW2467/MNTLAB-uhramovich-child1-build-job/uhramovich_dsl_script.tar.gz $JENKINS_HOME/workspace/EPBYMINW2467/pipeline-job/"
+        sh "cp $JENKINS_HOME/workspace/MNTLAB-uhramovich-child1-build-job/uhramovich_dsl_script.tar.gz $JENKINS_HOME/workspace/pipeline-job/"
     }
     stage('Packaging and Publishing results'){
         sh "cd $JENKINS_HOME/workspace/pipeline-job/"

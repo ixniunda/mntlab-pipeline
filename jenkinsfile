@@ -1,5 +1,9 @@
 node {
   def grdlHome
+  grdlHome = tool 'gradle3.3'
+  def jvHome
+  jvHome = tool 'java8'
+
 stage('Checkout') {
 checkout([$class: 'GitSCM', branches: [[name: '*/alubouski']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/mntlab-pipeline.git']]])
 }

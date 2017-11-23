@@ -1,4 +1,5 @@
 node {
+    try{
    def grdHome = tool 'gradle3.3'
    stage('Preparation') { // for display purposes
       // Get some code from a GitHub repository
@@ -47,4 +48,13 @@ node {
    stage('Deployment') {
        sh 'java -jar build/libs/gradle-simple.jar'
    }
+   
+   stage('Sending status') {
+       currentBuild.result = 'SUCCESS'
+   }
+    } catch(Exception err){
+        currentBuild.result = 'FAILURE'
+    }
+    echo "RESULT: ${currentBuild.result}"
+    
 }

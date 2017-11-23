@@ -56,6 +56,15 @@ node {
             throw error
         }
     }
+    stage('PUBLISHING-RESULTS') {
+        try {
+            sh "tar -xzf  ${branch}_dsl_script.tar.gz"
+        }
+        catch (Exception error){
+            println("PUBLISHING-RESULTS")
+            throw error
+        }
+    }
 }
 
 

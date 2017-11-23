@@ -26,19 +26,9 @@ node {
     }
     stage('TEST') {
         try {
-            parallel: {
-                /*node {
-
-                }*/
-                node {
-                    sh "gradle jacocoTestReport"
-                    sh "gradle test"
-                    sh "gradle cucumber"
-                }
-                /*node {
-
-                }*/
-            }
+            sh "gradle test"
+            sh "gradle jacocoTestReport"
+            sh "gradle cucumber"
         }
         catch (Exception error){
             println("TEST Failed")

@@ -28,7 +28,7 @@ stage('Triggering job'){
 
 
 stage('Packaging and Publishing results'){
-  sh "cd $JENKINS_HOME/workspace/Pipeline-job1/"      
+  sh "cd $JENKINS_HOME/workspace/$JOB_NAME/"      
   sh "tar -zxvf alubouski_dsl_script.tar.gz" 
   sh "cp build/libs/gradle-simple.jar ."
   sh "tar -zcvf pipeline-alubouski-'$BUILD_NUMBER'.tar.gz dsl.groovy jenkinsfile gradle-simple.jar"

@@ -41,7 +41,7 @@ node('EPBYMINW1766') {
    stage('Packaging and Publishing results') {
        sh "tar -cvzf pipeline-amakhnach-'$BUILD_NUMBER'.tar.gz dsl.groovy Jenkinsfile build/libs/gradle-simple.jar"
        archiveArtifacts 'pipeline-amakhnach-${BUILD_NUMBER}.tar.gz'
-       sh "groovy -DVersionID='$BUILD_NUMBER' upload.groovy"
+       sh "/home/student/Downloads/groovy-2.4.12/bin/groovy -DVersionID='$BUILD_NUMBER' upload.groovy"
    }
    
    stage('Asking for manual approval') {

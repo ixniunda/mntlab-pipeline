@@ -1,6 +1,7 @@
 node {
     try{
    def grdHome = tool 'gradle3.3'
+   def javaHome = tool 'java8'
    stage('Preparation') { // for display purposes
       // Get some code from a GitHub repository
       checkout([$class: 'GitSCM', branches: [[name: '*/amakhnach']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/mntlab-pipeline.git']]])
@@ -46,7 +47,7 @@ node {
    }
    
    stage('Deployment') {
-       sh 'java -jar build/libs/gradle-simple.jar'
+       sh "'${javaHome}java -jar build/libs/gradle-simple.jar'"
    }
    
    stage('Sending status') {

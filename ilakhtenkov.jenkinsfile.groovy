@@ -26,9 +26,13 @@ node {
     }
     stage('TEST') {
         try {
-            sh "gradle test"
-            sh "gradle jacocoTestReport"
-            sh "gradle cucumber"
+            parallel firstBranch: {
+                sh "gradle test"
+            }, secondBranch: {
+                sh "gradle jacocoTestReport"
+            }, thirdBranch: {
+                sh "gradle cucumber"
+            }
         }
         catch (Exception error){
             println("TEST Failed")

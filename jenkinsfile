@@ -1,0 +1,6 @@
+node {
+    def mvnHome
+    stage('Preparation') {
+// Get some code from a GitHub repository
+        checkout([$class: 'GitSCM', branches: [[name: 'kkaliada']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/mntlab-pipeline.git']]])
+    }}

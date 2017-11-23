@@ -1,6 +1,8 @@
+def giturl='https://github.com/MNT-Lab/mntlab-pipeline.git'
+def BRANCH_NAME='*/uhramovich'
 node {
     stage('Preparation'){
-checkout([$class: 'GitSCM', branches: [[name: '*/uhramovich']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/mntlab-pipeline.git']]])
+checkout([$class: 'GitSCM', branches: [[name: BRANCH_NAME]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: giturl]]])
 }
     stage('Build code'){
     mvnHome = tool 'gradle3.3'
@@ -19,6 +21,6 @@ checkout([$class: 'GitSCM', branches: [[name: '*/uhramovich']], doGenerateSubmod
             )
     }
     stage('Triggering job and fetching artefact after finishing'){
-        
+        def job = build job: 'MNTLAB-uhramovich-child1-build-job' ,parameters: [string(name: 'BRANCH_NAME', value: 'uhramovich')]
     }
     }

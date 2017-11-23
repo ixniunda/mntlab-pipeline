@@ -38,5 +38,10 @@ stage('Packaging and Publishing results'){
 
  stage('Asking for manual approval'){
 input message: 'You REALLY want to build?', ok: 'Yes'
+ }   
+
+stage('Deployment'){
+ sh "'${jvHome}/bin/java' -jar gradle-simple.jar"
  }    
+
 }

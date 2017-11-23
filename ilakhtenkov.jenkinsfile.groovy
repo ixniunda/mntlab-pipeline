@@ -22,7 +22,7 @@ node {
             throw error
         }
     }
-    stage('TEST') {
+    /*stage('TEST') {
         try {
             parallel {
                 sh "gradle test"
@@ -34,7 +34,7 @@ node {
             println("BUILD Failed")
             throw error
         }
-    }
+    }*/
 
 }
 

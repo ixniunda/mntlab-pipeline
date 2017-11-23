@@ -15,7 +15,7 @@ node {
     }
     stage('BUILD') {
         try {
-            sh "./gradle clean build"
+            sh "gradle clean build"
         }
         catch (Exception error){
             println("BUILD Failed")

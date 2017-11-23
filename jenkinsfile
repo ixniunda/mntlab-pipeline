@@ -10,10 +10,15 @@ checkout([$class: 'GitSCM', branches: [[name: '*/alubouski']], doGenerateSubmodu
       sh "'${grdlHome}/bin/gradle' build"
    }
 
-stage('Testing code') {
-      grdlHome = tool 'gradle3.3'
-      sh "'${grdlHome}/bin/gradle' test"
-
+ stage('Testing code') {
+     parallel (
+         cucumber: {sh "'${grdlHome}/bin/gradle' cucumber"},
+           
+            junit: {sh "'${grdlHome}/bin/gradle' test"},
+            
+            jacoco: {sh "'${grdlHome}/bin/gradle' jacoco"}
+         
+            )
  }
 
 }

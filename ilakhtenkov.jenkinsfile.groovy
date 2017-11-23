@@ -1,7 +1,9 @@
 import hudson.model.Run
+import groovy.json.JsonOutput
+
 
 node {
-    def repositoryUrl = "https://github.com/MNT-Lab/mntlab-pipeline.git"
+    def repositoryUrl = "https://github.com/MNT-Lab/mntlab-pipeline.gt"
     def branch = "ilakhtenkov"
 
     stage('PREPARATION') {

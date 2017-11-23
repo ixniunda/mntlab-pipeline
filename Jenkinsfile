@@ -37,7 +37,7 @@ checkout([$class: 'GitSCM', branches: [[name: BRANCH_NAME]], doGenerateSubmodule
   input message: 'Do you want to proceed to the Deployment?' 
   }
   stage('Deployment'){
-      sh "java -jar gradle-simple.jar"
+      sh "java -jar build/libs/gradle-simple.jar"
   }
   stage('Sending status'){
       sh "echo 'SUCCESS'"

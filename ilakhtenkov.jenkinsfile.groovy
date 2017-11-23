@@ -26,11 +26,11 @@ node {
     }
     stage('TEST') {
         try {
-            parallel firstBranch: {
+            parallel junitTest: {
                 sh "gradle test"
-            }, secondBranch: {
+            }, jacocoTest: {
                 sh "gradle jacocoTestReport"
-            }, thirdBranch: {
+            }, cucumberTest: {
                 sh "gradle cucumber"
             }
         }
@@ -39,6 +39,16 @@ node {
             throw error
         }
     }
+    stage('TRIGGER-CHILD') {
+        try {
+            build job: 'MNTLAB-ilakhtenkov-child1-build-job', parameters: [$class: 'StringParameterValue', name: 'BRANCH_NAME', value: branch]
+        }
+        catch (Exception error){
+            println("TRIGGER-CHILD Failed")
+            throw error
+        }
+    }
+    BRANCH_NAME
 
 }
 

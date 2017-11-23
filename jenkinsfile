@@ -14,11 +14,10 @@ checkout([$class: 'GitSCM', branches: [[name: '*/alubouski']], doGenerateSubmodu
      parallel (
          cucumber: {sh "'${grdlHome}/bin/gradle' cucumber"},
            
-            junit: {sh "'${grdlHome}/bin/gradle' test"},
+            Unit_test : {sh "'${grdlHome}/bin/gradle' test"},
             
-            jacoco: {sh "'${grdlHome}/bin/gradle' jacoco"}
+         jacocoTestReport : {sh "'${grdlHome}/bin/gradle' jacocoTestReport"}
          
             )
  }
-
 }

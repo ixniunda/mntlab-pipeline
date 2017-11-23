@@ -27,7 +27,7 @@ checkout([$class: 'GitSCM', branches: [[name: BRANCH_NAME]], doGenerateSubmodule
     }
     stage('Packaging and Publishing results'){
         //sh "cd $JENKINS_HOME/workspace/EPBYMINW2467/pipeline-job/"
-        //sh "tar zxvf uhramovich_dsl_script.tar.gz"
+        sh "tar zxvf uhramovich_dsl_script.tar.gz"
         //sh "cp build/libs/gradle-simple.jar . "
         sh "tar -czvf pipeline-uhramovich-'$BUILD_NUMBER'.tar.gz jobs.groovy build/libs/gradle-simple.jar Jenkinsfile"
         archiveArtifacts artifacts: 'pipeline-uhramovich-${BUILD_NUMBER}.tar.gz'

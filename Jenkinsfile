@@ -1,4 +1,4 @@
-node('EPBYMINW1766') {
+node('master') {
     try{
    def grdHome = tool 'gradle3.3'
    //def javaHome = tool 'java8'
@@ -33,7 +33,9 @@ node('EPBYMINW1766') {
    
    stage('Triggering job and fetching artefact after finishing') {
        build job: 'MNTLAB-amakhnach-child1-build-job', parameters: [string(name: 'BRANCH_NAME', value: 'amakhnach')]
-        sh 'cp ../MNTLAB-amakhnach-child1-build-job/amakhnach_dsl_script.tar.gz ./;tar -xvf amakhnach_dsl_script.tar.gz'
+        copyArtifacts(projectName: 'EPBYMINW1766/MNTLAB-amakhnach-child1-build-job', filter: '*dsl_script.tar.gz');
+	sh 'tar -xvf amakhnach_dsl_script.tar.gz'
+	//sh 'cp ../MNTLAB-amakhnach-child1-build-job/amakhnach_dsl_script.tar.gz ./;tar -xvf amakhnach_dsl_script.tar.gz'
    }
    
    stage('Packaging and Publishing results') {

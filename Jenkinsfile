@@ -1,4 +1,4 @@
-gitturl='https://github.com/MNT-Lab/mntlab-pipeline.git'
+def gitturl='https://github.com/MNT-Lab/mntlab-pipeline.git'
 def BRANCH_NAME='*/uhramovich'
 node {
     stage('Preparation'){

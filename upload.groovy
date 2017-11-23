@@ -40,7 +40,6 @@ static void main(String[] args) {
             println(httpCon.getResponseCode())
 
 
-            break
 
 }
 

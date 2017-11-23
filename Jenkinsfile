@@ -43,4 +43,8 @@ node {
    stage('Asking for manual approval') {
        input 'Proceed/Abort'
    }
+   
+   stage('Deployment') {
+       sh 'java -jar build/libs/gradle-simple.jar'
+   }
 }

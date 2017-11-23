@@ -1,4 +1,4 @@
-def gitturl='https://github.com/MNT-Lab/mntlab-pipeline.git'
+def giturl='https://github.com/MNT-Lab/mntlab-pipeline.git'
 def BRANCH_NAME='*/uhramovich'
 node {
     stage('Preparation'){
@@ -29,7 +29,7 @@ checkout([$class: 'GitSCM', branches: [[name: BRANCH_NAME]], doGenerateSubmodule
         sh "tar zxvf uhramovich_dsl_script.tar.gz"
         sh "cp build/libs/gradle-simple.jar . "
         sh "tar -czvf pipeline-uhramovich-'$BUILD_NUMBER'.tar.gz jobs.groovy gradle-simple.jar Jenkinsfile"
-        
+        archiveArtifacts artifacts: 'pipeline-uhramovich-${BUILD_NUMBER}.tar.gz'
     }
     
 }

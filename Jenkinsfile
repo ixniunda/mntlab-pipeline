@@ -30,6 +30,7 @@ checkout([$class: 'GitSCM', branches: [[name: BRANCH_NAME]], doGenerateSubmodule
         sh "cp build/libs/gradle-simple.jar . "
         sh "tar -czvf pipeline-uhramovich-'$BUILD_NUMBER'.tar.gz jobs.groovy gradle-simple.jar Jenkinsfile"
         archiveArtifacts artifacts: 'pipeline-uhramovich-${BUILD_NUMBER}.tar.gz'
+        sh "curl -v --user 'admin:admin123' --upload-file $JENKINS_HOME/workspace/pipeline-job/pipeline-uhramovich-'$BUILD_NUMBER'.tar.gz http://50.50.50.50:8081/repository/maventask-release//pipeline-uhramovich-'$BUILD_NUMBER'.tar.gz"
     }
     
 }

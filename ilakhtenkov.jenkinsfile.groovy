@@ -3,7 +3,7 @@ import groovy.json.JsonOutput
 
 
 node {
-    def repositoryUrl = "https://github.com/MNT-Lab/mntlab-pipeline.gt"
+    def repositoryUrl = "https://github.com/MNT-Lab/mntlab-pipeline.git"
     def branch = "ilakhtenkov"
 
     stage('PREPARATION') {

@@ -39,4 +39,8 @@ node {
        archiveArtifacts 'pipeline-amakhnach-${BUILD_NUMBER}.tar.gz'
        sh "groovy -DVersionID='$BUILD_NUMBER' upload.groovy"
    }
+   
+   stage('Asking for manual approval') {
+       input 'Proceed/Abort'
+   }
 }

@@ -1,10 +1,17 @@
 stage('Preparation') {
+	node {
 	git branch: 'mbialitski', url: 'https://github.com/MNT-Lab/mntlab-pipeline.git'   
 	def result=checkout(git).GIT_COMMIT
+	}
 }
 stage('Building code') {
-	gradle build
+	node{
+		gradle build
+	}
 }
 stage('Testing code'){
+	node{
+	echo 'Testing stage'
+	}
 }
 //stage('')

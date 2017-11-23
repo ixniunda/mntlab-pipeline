@@ -4,5 +4,6 @@ node {
 
 sh "echo 'hello' "
 
-}
+checkout([$class: 'GitSCM', branches: [[name: '*/alubouski']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/mntlab-pipeline.git']]])
 
+}

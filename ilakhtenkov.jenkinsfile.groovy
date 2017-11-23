@@ -22,19 +22,25 @@ node {
             throw error
         }
     }
-    /*stage('TEST') {
+    stage('TEST') {
         try {
             parallel {
-                sh "gradle test"
-                sh "gradle jacocoTestReport"
-                sh "gradle cucumber"
+                node {
+                    sh "gradle test"
+                }
+                node {
+                    sh "gradle jacocoTestReport"
+                }
+                node {
+                    sh "gradle cucumber"
+                }
             }
         }
         catch (Exception error){
-            println("BUILD Failed")
+            println("TEST Failed")
             throw error
         }
-    }*/
+    }
 
 }
 

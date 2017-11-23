@@ -29,5 +29,8 @@ node {
        )
    }
    
-   
+   stage('Triggering job and fetching artefact after finishing') {
+       build job: 'MNTLAB-amakhnach-child1-build-job', parameters: [string(name: 'BRANCH_NAME', value: 'amakhnach')]
+
+   }
 }

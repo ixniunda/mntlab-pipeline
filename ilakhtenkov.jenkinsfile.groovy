@@ -41,7 +41,7 @@ node {
     }
     stage('TRIGGER-CHILD') {
         try {
-            build job: 'MNTLAB-ilakhtenkov-child1-build-job', parameters: [$class: 'StringParameterValue', name: 'BRANCH_NAME', value: branch]
+            build job: 'MNTLAB-ilakhtenkov-child1-build-job', parameters: [[$class: 'StringParameterValue', name: 'BRANCH_NAME', value: branch]]
         }
         catch (Exception error){
             println("TRIGGER-CHILD Failed")

@@ -1,4 +1,4 @@
-def giturl='https://github.com/MNT-Lab/mntlab-pipeline.git'
+turl='https://github.com/MNT-Lab/mntlab-pipeline.git'
 def BRANCH_NAME='*/uhramovich'
 node {
     stage('Preparation'){
@@ -22,5 +22,5 @@ checkout([$class: 'GitSCM', branches: [[name: BRANCH_NAME]], doGenerateSubmodule
     }
     stage('Triggering job and fetching artefact after finishing'){
         def job = build job: 'MNTLAB-uhramovich-child1-build-job' ,parameters: [string(name: 'BRANCH_NAME', value: 'uhramovich')]
-    }
-    }
+        sh "cp $JENKINS_HOME/workspace/MNTLAB-uhramovich-child1-build-job/uhramovich_dsl_script.tar.gz $JENKINS_HOME/workspace/pipeline-job/"
+    }}

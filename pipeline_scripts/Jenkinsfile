@@ -1,9 +1,7 @@
 stage('Preparation') {
 	node {
-		steps{
-			git url: 'https://github.com/MNT-Lab/mntlab-pipeline.git', branch: 'mbialitski'
-			//def result=checkout(git).GIT_COMMIT
-		}
+		git url: 'https://github.com/MNT-Lab/mntlab-pipeline.git', branch: 'mbialitski'
+		//def result=checkout(git).GIT_COMMIT	
 	}
 }
 stage('Building code') {

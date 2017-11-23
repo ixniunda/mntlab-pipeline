@@ -26,5 +26,8 @@ node {
                                     sh "'${mvnHome}/bin/gradle' jacocoTestReport"
                                 })
             }
+    stage('Triggering job and fetching artefact after finishing') {
+        build job: 'MNTLAB-kkaliada-child1-build-job', parameters: [string( name: 'BRANCH_NAME', value: 'kkaliada')]
+    }
 }
 

@@ -40,8 +40,15 @@ stage('Packaging and Publishing results'){
 input message: 'You REALLY want to build?', ok: 'Yes'
  }   
 
-stage('Deployment'){
+try {
+        // do something that doesn't fail
+      stage('Deployment'){
  sh "'${jvHome}/bin/java' -jar gradle-simple.jar"
- }    
+ }       
+        currentBuild.result = 'SUCCESS'
+    } catch (Exception err) {
+        currentBuild.result = 'FAILURE'
+    }
+    echo "RESULT: ${currentBuild.result}"
 
 }

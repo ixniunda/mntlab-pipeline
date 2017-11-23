@@ -1,4 +1,4 @@
-node('master') {
+node('EPBYMINW1766') {
     try{
    def grdHome = tool 'gradle3.3'
    //def javaHome = tool 'java8'

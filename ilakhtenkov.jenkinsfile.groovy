@@ -12,7 +12,7 @@ node {
         }
         catch (Exception error){
             println("PREPARATION Failed")
-            throw error
+            //throw error
         }
     }
     stage('BUILD') {
@@ -21,7 +21,7 @@ node {
         }
         catch (Exception error){
             println("BUILD Failed")
-            //throw error
+            throw error
         }
     }
     stage('TEST') {

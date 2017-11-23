@@ -15,7 +15,7 @@ checkout([$class: 'GitSCM', branches: [[name: BRANCH_NAME]], doGenerateSubmodule
            
             junit: {sh "'${mvnHome}/bin/gradle' test"},
          
-            jacoco: {sh "'${mvnHome}/bin/gradle' jacoco"}
+            jacoco: {sh "'${mvnHome}/bin/gradle' jacocoTestReport"}
             
             
             )

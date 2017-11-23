@@ -41,14 +41,14 @@ node {
     }
     stage('TRIGGER-CHILD') {
         try {
-            build job: 'EPBYMINW2033/MNTLAB-ilakhtenkov-child1-build-job', parameters: [[$class: 'StringParameterValue', name: 'BRANCH_NAME', value: branch]]
+            build job: 'EPBYMINW2033/MNTLAB-ilakhtenkov-child1-build-job', parameters: [[$class: 'StringParameterValue', name: 'BRANCH_NAME', value: branch]], wait=true
         }
         catch (Exception error){
             println("TRIGGER-CHILD Failed")
             throw error
         }
     }
-    BRANCH_NAME
+    sh "FINISHED"
 
 }
 

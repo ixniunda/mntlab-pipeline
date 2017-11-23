@@ -6,6 +6,7 @@ node {
         git branch: branch, url: repositoryUrl
     }
     stage('BUILD') {
+        def rtGradle = Artifactory.newGradleBuild()
         rtGradle.tool = "gradle3.3"
         rtGradle.deployer repo:'ext-release-local', server: server
         rtGradle.resolver repo:'remote-repos', server: server

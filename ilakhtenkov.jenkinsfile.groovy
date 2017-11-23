@@ -22,7 +22,20 @@ node {
             throw error
         }
     }
-    echo "Hello world"
+    stage('TEST') {
+        try {
+            parallel {
+                sh "gradle test"
+                sh "gradle jacocoTestReport"
+                sh "gradle cucumber"
+            }
+        }
+        catch (Exception error){
+            println("BUILD Failed")
+            throw error
+        }
+    }
+
 }
 
 

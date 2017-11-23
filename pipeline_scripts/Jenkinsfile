@@ -1,3 +1,4 @@
 stage('Preparation') {
-    // some block
+	git branch: 'mbialitski', url: 'https://github.com/MNT-Lab/mntlab-pipeline.git'   
+	def result=checkout(git).GIT_COMMIT
 }

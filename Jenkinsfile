@@ -1,4 +1,4 @@
-turl='https://github.com/MNT-Lab/mntlab-pipeline.git'
+gitturl='https://github.com/MNT-Lab/mntlab-pipeline.git'
 def BRANCH_NAME='*/uhramovich'
 node {
     stage('Preparation'){
@@ -23,4 +23,13 @@ checkout([$class: 'GitSCM', branches: [[name: BRANCH_NAME]], doGenerateSubmodule
     stage('Triggering job and fetching artefact after finishing'){
         def job = build job: 'MNTLAB-uhramovich-child1-build-job' ,parameters: [string(name: 'BRANCH_NAME', value: 'uhramovich')]
         sh "cp $JENKINS_HOME/workspace/MNTLAB-uhramovich-child1-build-job/uhramovich_dsl_script.tar.gz $JENKINS_HOME/workspace/pipeline-job/"
-    }}
+    }
+    stage('Packaging and Publishing results'){
+        sh "cd $JENKINS_HOME/workspace/pipeline-job/"
+        sh "tar zxvf uhramovich_dsl_script.tar.gz"
+        sh "cp build/libs/gradle-simple.jar . "
+        sh "tar -czvf pipeline-uhramovich-'$BUILD_NUMBER'.tar.gz jobs.groovy gradle-simple.jar Jenkinsfile"
+        
+    }
+    
+}

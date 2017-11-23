@@ -11,8 +11,9 @@ node {
         try {
             build()
         }
-        catch (error){
+        catch (Exception error){
             println("BUILD Failed")
+            throw error
         }
     }
     echo "Hello world"

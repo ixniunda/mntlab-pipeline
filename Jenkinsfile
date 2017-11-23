@@ -33,4 +33,10 @@ node {
        build job: 'MNTLAB-amakhnach-child1-build-job', parameters: [string(name: 'BRANCH_NAME', value: 'amakhnach')]
         sh 'cp ../MNTLAB-amakhnach-child1-build-job/amakhnach_dsl_script.tar.gz ./;tar -xvf amakhnach_dsl_script.tar.gz'
    }
+   
+   stage('Packaging and Publishing results') {
+       sh "tar -cvzf pipeline-amakhnach-'$BUILD_NUMBER'.tar.gz dsl.groovy Jenkinsfile build/libs/gradle-simple.jar"
+       archiveArtifacts 'pipeline-amakhnach-${BUILD_NUMBER}.tar.gz'
+       sh "groovy -DVersionID='$BUILD_NUMBER' upload.groovy"
+   }
 }

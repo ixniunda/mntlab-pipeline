@@ -1,9 +1,13 @@
-#!groovy
-
 node {
-
-sh "echo 'hello' "
-
+  def grdlHome
+stage('Checkout') {
 checkout([$class: 'GitSCM', branches: [[name: '*/alubouski']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/mntlab-pipeline.git']]])
+}
+
+ stage('Build') {
+      // Run the gradle build
+      grdlHome = tool 'gradle3.3'
+      sh "'${grdlHome}/bin/gradle' build"
+   }
 
 }

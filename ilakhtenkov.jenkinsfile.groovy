@@ -27,15 +27,17 @@ node {
     stage('TEST') {
         try {
             parallel: {
-                node {
-                    sh "gradle test"
-                }
+                /*node {
+
+                }*/
                 node {
                     sh "gradle jacocoTestReport"
-                }
-                node {
+                    sh "gradle test"
                     sh "gradle cucumber"
                 }
+                /*node {
+
+                }*/
             }
         }
         catch (Exception error){

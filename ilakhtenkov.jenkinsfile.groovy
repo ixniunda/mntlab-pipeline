@@ -8,6 +8,7 @@ node {
 
     stage('PREPARATION') {
         try {
+            step([$class: 'WsCleanup'])
             git branch: branch, url: repositoryUrl
         }
         catch (Exception error){
@@ -55,8 +56,6 @@ node {
             throw error
         }
     }
-    sh "FINISHED"
-
 }
 
 

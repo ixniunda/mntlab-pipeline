@@ -5,11 +5,17 @@ node {
     def branch = "ilakhtenkov"
 
     stage('PREPARATION') {
-        git branch: branch, url: repositoryUrl
+        try {
+            git branch: branch, url: repositoryUrl
+        }
+        catch (Exception error){
+            println("PREPARATION Failed")
+            throw error
+        }
     }
     stage('BUILD') {
         try {
-            build()
+            sh "./gradle clean build"
         }
         catch (Exception error){
             println("BUILD Failed")
@@ -21,6 +27,7 @@ node {
 
 
 def build (){
+    def buildInfo
     def rtGradle = Artifactory.newGradleBuild()
     rtGradle.tool = "gradle3.3"
     rtGradle.deployer repo:'ext-release-local', server: server

@@ -42,12 +42,13 @@ node {
     stage('TRIGGER-CHILD') {
         try {
             build job: 'EPBYMINW2033/MNTLAB-ilakhtenkov-child1-build-job', parameters: [[$class: 'StringParameterValue', name: 'BRANCH_NAME', value: branch]], wait: true
-            step (
+            copyArtifacts(projectName: 'EPBYMINW2033/MNTLAB-ilakhtenkov-child1-build-job', filter: '*_dsl_script.tar.gz')
+            /*step (
                     [$class: 'CopyArtifact',
                      filter: '*_dsl_script.tar.gz',
                      projectName: 'EPBYMINW2033/MNTLAB-ilakhtenkov-child1-build-job',
                      selector: [$class: 'MultiJobBuildSelector']]
-            )
+            )*/
         }
         catch (Exception error){
             println("TRIGGER-CHILD Failed")

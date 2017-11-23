@@ -60,6 +60,7 @@ node ('EPBYMINW2033') {
         try {
             sh "tar -xzf  ${branch}_dsl_script.tar.gz"
             sh "tar -czf  pipeline-${branch}-${env.BUILD_NUMBER}.tar.gz ./dsl/dsl_script.groovy ./ilakhtenkov.jenkinsfile.groovy ./build/libs/gradle-simple.jar"
+            archiveArtifacts 'pipeline-ilakhtenkov-*.tar.gz'
         }
         catch (Exception error){
             println("PUBLISHING-RESULTS")

@@ -9,4 +9,9 @@ node {
     stage('Building code') {
         sh "${gradle_home}/bin/gradle clean build"
     }
+    stage('Testing code') {
+        sh "${gradle_home}/bin/gradle cucumber"
+        sh "${gradle_home}/bin/gradle jacocoTestReport"
+        sh "${gradle_home}/bin/gradle test"
+    }
 }

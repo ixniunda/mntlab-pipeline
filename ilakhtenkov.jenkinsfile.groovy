@@ -65,7 +65,25 @@ node {
             sh "curl -v --user 'jenkins:jenkins' --upload-file './pipeline-${branch}-${env.BUILD_NUMBER}.tar.gz' 'http://nexus.local/repository/Artifact_storage/com/epam/mntlab/pipeline/gradle-simple-${env.BUILD_NUMBER}/${env.BUILD_NUMBER}/gradle-simple-${env.BUILD_NUMBER}-${env.BUILD_NUMBER}.tar.gz'"
         }
         catch (Exception error){
-            println("PUBLISHING-RESULTS")
+            println("PUBLISHING-RESULTS Failed")
+            throw error
+        }
+    }
+    stage('APPROVAL') {
+        try {
+            
+        }
+        catch (Exception error){
+            println("APPROVAL Failed")
+            throw error
+        }
+    }
+    stage('DEPLOYING') {
+        try {
+            sh "java -jar gradle-simple.jar"
+            }
+        catch (Exception error){
+            println("DEPLOYING Failed")
             throw error
         }
     }

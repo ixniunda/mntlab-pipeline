@@ -21,6 +21,6 @@ node {
     }
     stage('Packaging and Publishing results') {
         sh "tar -zxvf ivauchok_dsl_script.tar.gz && tar -czf pipeline-ivauchok-${BUILD_NUMBER}.tar.gz ./jobs.groovy ./Jenkinsfile.groovy ./build/libs/gradle-simple.jar"
-        archive includes: 'pipeline-ivauchok.*'
+    archiveArtifacts "pipeline-ivauchok-*.tar.gz"
     }
 }

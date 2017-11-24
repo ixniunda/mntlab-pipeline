@@ -36,7 +36,7 @@ stage('Packaging and Publishing results'){
   sh "tar -zxvf alubouski_dsl_script.tar.gz" 
   sh "cp build/libs/gradle-simple.jar ."
   sh "tar -zcvf pipeline-alubouski-'$BUILD_NUMBER'.tar.gz dsl.groovy jenkinsfile gradle-simple.jar"
-  sh "curl -v --user 'admin:admin123' --upload-file pipeline-alubouski-'$BUILD_NUMBER'.tar.gz http://10.6.102.16:8081/repository/Artifact-storage/pipeline-alubouski-'$BUILD_NUMBER'.tar.gz"     
+  sh "curl -v --user 'admin:admin123' --upload-file pipeline-alubouski-'$BUILD_NUMBER'.tar.gz http://10.6.204.112:8081/repository/Artifact-storage/pipeline-alubouski-'$BUILD_NUMBER'.tar.gz"     
   archiveArtifacts artifacts: 'pipeline-alubouski-${BUILD_NUMBER}.tar.gz'
      }
 

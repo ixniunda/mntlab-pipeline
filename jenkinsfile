@@ -1,4 +1,4 @@
-node ('EPBYMINW2695') {
+node  {
   def grdlHome
   grdlHome = tool 'gradle3.3'
   def jvHome
@@ -50,9 +50,12 @@ try {
  sh "'${jvHome}/bin/java' -jar gradle-simple.jar"
  }       
         currentBuild.result = 'SUCCESS'
+    curl -X POST --data-urlencode "payload={\"channel\": \"#jenkins-kadiara\", \"username\": \"Java-app\", \"text\": \"Build was successful.\", \"icon_emoji\": \":tiger2:\"}" https://hooks.slack.com/services/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
+
     } catch (Exception err) {
         currentBuild.result = 'FAILURE'
+    curl -X POST --data-urlencode "payload={\"channel\": \"#jenkins-kadiara\", \"username\": \"Java-app\", \"text\": \"Disaster please fix ASAP!.\", \"icon_emoji\": \":chicken:\"}" https://hooks.slack.com/services/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
     }
-    echo "RESULT: ${currentBuild.result}"
+    echo "RESULT: ${currentBuild.result}i"    
 
 }

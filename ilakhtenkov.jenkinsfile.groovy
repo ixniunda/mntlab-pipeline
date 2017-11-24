@@ -71,7 +71,11 @@ node {
     }
     stage('APPROVAL') {
         try {
-            
+            def userInput = input(
+                    id: 'userInput', message: 'Deploy? (YES|NO)', parameters: [
+                    [$class: 'TextParameterDefinition', defaultValue: 'NO', description: 'Environment', name: 'env']
+            ])
+            println env
         }
         catch (Exception error){
             println("APPROVAL Failed")
@@ -80,7 +84,7 @@ node {
     }
     stage('DEPLOYING') {
         try {
-            sh "java -jar gradle-simple.jar"
+            sh "java -jar ./gradle-simple.jar"
             }
         catch (Exception error){
             println("DEPLOYING Failed")

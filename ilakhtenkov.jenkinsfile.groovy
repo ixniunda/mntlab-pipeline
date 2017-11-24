@@ -2,7 +2,7 @@ import hudson.model.Run
 import groovy.json.JsonOutput
 
 
-node (master) {
+node {
     def repositoryUrl = "https://github.com/MNT-Lab/mntlab-pipeline.git"
     def branch = "ilakhtenkov"
 

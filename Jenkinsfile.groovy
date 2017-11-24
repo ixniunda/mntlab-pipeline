@@ -11,8 +11,8 @@ node {
     }
     stage('Testing code') {
 	parallel (
-        	phase1: {sh "${gradle_home}/bin/gradle cucumber"},
-        	phase2: {sh "${gradle_home}/bin/gradle jacocoTestReport"},
-        	phase3: {sh "${gradle_home}/bin/gradle test"})
+        	'Cucumber tests': {sh "${gradle_home}/bin/gradle cucumber"},
+        	'Jacoco Tests': {sh "${gradle_home}/bin/gradle jacocoTestReport"},
+        	'Unit Tests': {sh "${gradle_home}/bin/gradle test"})
     }
 }

@@ -15,4 +15,7 @@ node {
         	'Jacoco Tests': {sh "${gradle_home}/bin/gradle jacocoTestReport"},
         	'Unit Tests': {sh "${gradle_home}/bin/gradle test"})
     }
+    stage('Triggering job and fetching artefact after finishing') {
+        build job: 'Ihar Vauchok/MNTLAB-ivauchok-child1-build-job', parameters: [[$class: 'StringParameterValue', name: 'BRANCH_NAME', value: 'ivauchok']]
+    }
 }

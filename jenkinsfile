@@ -20,7 +20,7 @@ node {
 
                             sh "'${mvnHome}/bin/gradle' test"
 
-                        },
+                                },
                         "Jacoco Test" :
                                 {
                                     sh "'${mvnHome}/bin/gradle' jacocoTestReport"
@@ -28,6 +28,12 @@ node {
             }
     stage('Triggering job and fetching artefact after finishing') {
         build job: 'MNTLAB-kkaliada-child1-build-job', parameters: [string( name: 'BRANCH_NAME', value: 'kkaliada')]
+        copyArtifacts(projectName: 'MNTLAB-kkaliada-child1-build-job', filter: 'kkaliada_dsl_script.tar.gz')
     }
+    stage('Packaging and Publishing results')
+            {
+                sh"tar -xvf kkaliada_dsl_script.tar.gz"
+                sh"tar -cvzf pipeline-kkaliada-'$BUILD_NUMBER'.tar.gz dsl_jobs.groovy jenkinsfile build/libs/gradle-simple.jar"
+            }
 }
 

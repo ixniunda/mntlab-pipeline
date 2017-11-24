@@ -71,11 +71,12 @@ node {
     }
     stage('APPROVAL') {
         try {
-            def userInput = input(
-                    id: 'userInput', message: 'Deploy? (YES|NO)', parameters: [
-                    [$class: 'TextParameterDefinition', defaultValue: 'NO', description: 'Environment', name: 'env']
-            ])
-            println env
+            //def userInput = input(
+            //        id: 'userInput', message: 'Deploy? (YES|NO)', parameters: [
+            //        [$class: 'TextParameterDefinition', defaultValue: 'NO', description: 'Environment', name: 'uinp']
+            //])
+            //println uinp
+            input message: 'Do you want to deploy?', ok: 'Yes'
         }
         catch (Exception error){
             println("APPROVAL Failed")

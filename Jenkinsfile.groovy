@@ -17,9 +17,10 @@ node {
     }
     stage('Triggering job and fetching artefact after finishing') {
         build job: 'Ihar Vauchok/MNTLAB-ivauchok-child1-build-job', parameters: [[$class: 'StringParameterValue', name: 'BRANCH_NAME', value: 'ivauchok']], wait: true
-    sh "cp ${JENKINS_HOME}/workspace/Ihar\\ Vauchok/MNTLAB-ivauchok-child1-build-job/ivauchok_dsl_script.tar.gz ${JENKINS_HOME}/workspace/pipeline/"
+        sh "cp ${JENKINS_HOME}/workspace/Ihar\\ Vauchok/MNTLAB-ivauchok-child1-build-job/ivauchok_dsl_script.tar.gz ${JENKINS_HOME}/workspace/pipeline/"
     }
     stage('Packaging and Publishing results') {
         sh "tar -zxvf ivauchok_dsl_script.tar.gz && tar -czf pipeline-ivauchok-${BUILD_NUMBER}.tar.gz ./jobs.groovy ./Jenkinsfile.groovy ./build/libs/gradle-simple.jar"
+        archive includes: 'pipeline-ivauchok.*'
     }
 }

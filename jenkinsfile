@@ -27,7 +27,7 @@ checkout([$class: 'GitSCM', branches: [[name: '*/alubouski']], doGenerateSubmodu
 
 stage('Triggering job'){
  build job: 'MNTLAB-alubouski-child1-build-job', parameters: [string(name: 'BRANCH_NAME', value: 'alubouski')]
- copyArtifacts(projectName: 'EPBYMINW2695/MNTLAB-alubouski-child1-build-job', filter: '*dsl_script.tar.gz');
+ copyArtifacts(projectName: 'MNTLAB-alubouski-child1-build-job', filter: '*dsl_script.tar.gz');
  }
 
 
@@ -50,11 +50,11 @@ try {
  sh "'${jvHome}/bin/java' -jar gradle-simple.jar"
  }       
         currentBuild.result = 'SUCCESS'
-    curl -X POST --data-urlencode "payload={\"channel\": \"#jenkins-kadiara\", \"username\": \"Java-app\", \"text\": \"Build was successful.\", \"icon_emoji\": \":tiger2:\"}" https://hooks.slack.com/services/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
+   sh  ''' curl -X POST --data-urlencode "payload={\"channel\": \"#jenkins-kadiara\", \"username\": \"Java-app\", \"text\": \"Build was successful.\", \"icon_emoji\": \":tiger2:\"}" https://hooks.slack.com/services/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 '''
 
     } catch (Exception err) {
         currentBuild.result = 'FAILURE'
-    curl -X POST --data-urlencode "payload={\"channel\": \"#jenkins-kadiara\", \"username\": \"Java-app\", \"text\": \"Disaster please fix ASAP!.\", \"icon_emoji\": \":chicken:\"}" https://hooks.slack.com/services/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
+    sh ''' curl -X POST --data-urlencode "payload={\"channel\": \"#jenkins-kadiara\", \"username\": \"Java-app\", \"text\": \"Disaster please fix ASAP!.\", \"icon_emoji\": \":chicken:\"}" https://hooks.slack.com/services/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 '''
     }
     echo "RESULT: ${currentBuild.result}i"    
 

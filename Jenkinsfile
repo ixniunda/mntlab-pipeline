@@ -31,7 +31,8 @@ checkout([$class: 'GitSCM', branches: [[name: BRANCH_NAME]], doGenerateSubmodule
         //sh "cp build/libs/gradle-simple.jar . "
         sh "tar -czvf pipeline-uhramovich-'$BUILD_NUMBER'.tar.gz jobs.groovy build/libs/gradle-simple.jar Jenkinsfile"
         archiveArtifacts artifacts: 'pipeline-uhramovich-${BUILD_NUMBER}.tar.gz'
-        sh "curl -v --user 'admin:admin123' --upload-file pipeline-uhramovich-'$BUILD_NUMBER'.tar.gz http://50.50.50.50:8081/repository/maventask-release/pipeline-uhramovich-'$BUILD_NUMBER'.tar.gz"
+        nexusArtifactUploader artifacts: [[artifactId: 'pipeline-uhramovich-${BUILD_NUMBER}', classifier: '', file: 'pipeline-uhramovich-${BUILD_NUMBER}.tar.gz', type: 'tar.gz']], credentialsId: '7f29ad7d-7922-461e-a412-e23a6f428d79', groupId: 'pipe', nexusUrl: '50.50.50.50:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'maventask-release', version: '$BUILD_NUMBER'
+        //sh "curl -v --user 'admin:admin123' --upload-file pipeline-uhramovich-'$BUILD_NUMBER'.tar.gz http://50.50.50.50:8081/repository/maventask-release/pipeline-uhramovich-'$BUILD_NUMBER'.tar.gz"
     }
   stage('Asking for approval'){  
   input message: 'Do you want to proceed to the Deployment?' 

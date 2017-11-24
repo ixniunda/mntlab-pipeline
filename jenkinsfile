@@ -27,7 +27,7 @@ checkout([$class: 'GitSCM', branches: [[name: '*/alubouski']], doGenerateSubmodu
 
 stage('Triggering job'){
  build job: 'MNTLAB-alubouski-child1-build-job', parameters: [string(name: 'BRANCH_NAME', value: 'alubouski')]
- sh "cp $JENKINS_HOME/workspace/MNTLAB-alubouski-child1-build-job/alubouski_dsl_script.tar.gz $JENKINS_HOME/workspace/$JOB_NAME/"
+ copyArtifacts(projectName: 'EPBYMINW2695/MNTLAB-alubouski-child1-build-job', filter: '*dsl_script.tar.gz');
  }
 
 

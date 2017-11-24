@@ -17,6 +17,6 @@ node {
     }
     stage('Triggering job and fetching artefact after finishing') {
         build job: 'Ihar Vauchok/MNTLAB-ivauchok-child1-build-job', parameters: [[$class: 'StringParameterValue', name: 'BRANCH_NAME', value: 'ivauchok']], wait: true
-    sh "cp ${JENKINS_HOME}/master/workspace/Ihar\\ Vauchok/MNTLAB-ivauchok-child1-build-job/ivauchok_dsl_script.tar.gz ${JENKINS_HOME}/master/workspace/pipeline/"
+    sh "cp ${JENKINS_HOME}/workspace/Ihar\\ Vauchok/MNTLAB-ivauchok-child1-build-job/ivauchok_dsl_script.tar.gz ${JENKINS_HOME}/workspace/pipeline/"
     }
 }

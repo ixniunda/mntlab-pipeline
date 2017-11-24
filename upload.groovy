@@ -21,7 +21,7 @@ static void main(String[] args) {
     
 
     //def name1 = "group1/home-task/${number}/home-task-${number}.tar.gz"
-    def nexussrv = "http://epbyminw1766.epam.com:8081/repository"
+    def nexussrv = "http://epbyminw1766:8081/repository"
     def repo = "maven-releases"
 
 

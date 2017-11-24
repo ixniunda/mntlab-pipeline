@@ -85,7 +85,7 @@ node {
     }
     stage('DEPLOYING') {
         try {
-            sh "java -jar build/lib/gradle-simple.jar"
+            sh "java -jar build/libs/gradle-simple.jar"
             }
         catch (Exception error){
             println("DEPLOYING Failed")

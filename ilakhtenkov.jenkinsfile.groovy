@@ -2,7 +2,7 @@ import hudson.model.Run
 import groovy.json.JsonOutput
 
 
-node {
+node (master) {
     def repositoryUrl = "https://github.com/MNT-Lab/mntlab-pipeline.git"
     def branch = "ilakhtenkov"
 
@@ -61,6 +61,8 @@ node {
             sh "tar -xzf  ${branch}_dsl_script.tar.gz"
             sh "tar -czf  pipeline-${branch}-${env.BUILD_NUMBER}.tar.gz ./dsl/dsl_script.groovy ./ilakhtenkov.jenkinsfile.groovy ./build/libs/gradle-simple.jar"
             archiveArtifacts 'pipeline-ilakhtenkov-*.tar.gz'
+            //curl -v --user 'jenkins:jenkins' --upload-file "./pipeline-${branch}-${env.BUILD_NUMBER}.tar.gz" "http://epbyminw2033.minsk.epam.com:8081/repository/Artifact_storage/com/epam/mntlab/gradle-simple-${env.BUILD_NUMBER}/${env.BUILD_NUMBER}/gradle-simple-${env.BUILD_NUMBER}-${env.BUILD_NUMBER}tar.gz"
+            sh "curl -v --user 'jenkins:jenkins' --upload-file './pipeline-${branch}-${env.BUILD_NUMBER}.tar.gz' 'http://nexus.local/repository/Artifact_storage/com/epam/mntlab/gradle-simple-${env.BUILD_NUMBER}/${env.BUILD_NUMBER}/gradle-simple-${env.BUILD_NUMBER}-${env.BUILD_NUMBER}tar.gz'"
         }
         catch (Exception error){
             println("PUBLISHING-RESULTS")

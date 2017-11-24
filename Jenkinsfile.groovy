@@ -10,8 +10,9 @@ node {
         sh "${gradle_home}/bin/gradle clean build"
     }
     stage('Testing code') {
-        sh "${gradle_home}/bin/gradle cucumber"
-        sh "${gradle_home}/bin/gradle jacocoTestReport"
-        sh "${gradle_home}/bin/gradle test"
+	parallel (
+        	phase1: {sh "${gradle_home}/bin/gradle cucumber"},
+        	phase2: {sh "${gradle_home}/bin/gradle jacocoTestReport"},
+        	phase3: {sh "${gradle_home}/bin/gradle test"})
     }
 }

@@ -1,7 +1,10 @@
 node {
     notifyStarted()
+    
     def gradle_home = tool 'gradle3.3'
     def branch_name = 'ivauchok'
+    def artifact_name = "pipeline-${branch_name}-${BUILD_NUMBER}.tar.gz"
+    
     stage('Preparation (Checking out)') {
         checkout scm: [$class: 'GitSCM', branches: [[name: "*/${branch_name}"]], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/mntlab-pipeline.git']]]
     }
@@ -15,13 +18,13 @@ node {
                 'Unit Tests': {sh "${gradle_home}/bin/gradle test"})
     }
     stage('Triggering job and fetching artefact after finishing') {
-        build job: 'Ihar Vauchok/MNTLAB-ivauchok-child1-build-job', parameters: [[$class: 'StringParameterValue', name: 'BRANCH_NAME', value: "${branch_name}"]], wait: true
+        build job: "Ihar Vauchok/MNTLAB-${branch_name}-child1-build-job", parameters: [[$class: 'StringParameterValue', name: 'BRANCH_NAME', value: "${branch_name}"]], wait: true
         sh "cp ${JENKINS_HOME}/workspace/Ihar\\ Vauchok/MNTLAB-${branch_name}-child1-build-job/${branch_name}_dsl_script.tar.gz ${JENKINS_HOME}/workspace/pipeline/"
     }
     stage('Packaging and Publishing results') {
         sh "tar -zxvf ${branch_name}_dsl_script.tar.gz && cp build/libs/gradle-simple.jar gradle-simple.jar && tar -czf pipeline-${branch_name}-${BUILD_NUMBER}.tar.gz jobs.groovy Jenkinsfile.groovy gradle-simple.jar"
-        archiveArtifacts "pipeline-ivauchok-*.tar.gz"
-        sh "curl -v --user 'nexus-service-user:123456' --upload-file 'pipeline-${branch_name}-${BUILD_NUMBER}.tar.gz' 'http://nexus/repository/project-releases/pipeline/pipeline-${branch_name}/${BUILD_NUMBER}/pipeline-${branch_name}-${BUILD_NUMBER}.tar.gz'"
+        archiveArtifacts "${artifact_name}"
+        sh "curl -v --user 'nexus-service-user:123456' --upload-file ${artifact_name} http://nexus/repository/project-releases/pipeline/pipeline-${branch_name}/${BUILD_NUMBER}/${artifact_name}"
     }
     stage('Asking for manual approval') {
         input 'Do you want to deploy gradle-simple.jar?'

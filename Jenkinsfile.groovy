@@ -39,20 +39,8 @@ node {
 
 def notifyStarted() {
     slackSend (color: '#FFFF00', message: "STARTED: Job '${JOB_NAME} [${BUILD_NUMBER}]' (${BUILD_URL})")
-    emailext (
-            subject: "STARTED: Job '${JOB_NAME} [${BUILD_NUMBER}]'",
-            body: """<p>STARTED: Job '${JOB_NAME} [${BUILD_NUMBER}]':</p>
-         <p>Check console output at "<a href="${BUILD_URL}">${JOB_NAME} [${BUILD_NUMBER}]</a>"</p>""",
-            recipientProviders: [[$class: 'DevelopersRecipientProvider']]
-    )
 }
 
 def notifySuccessful() {
     slackSend (color: '#00FF00', message: "SUCCESSFUL: Job '${JOB_NAME} [${BUILD_NUMBER}]' (${BUILD_URL})")
-    emailext (
-            subject: "SUCCESSFUL: Job '${JOB_NAME} [${BUILD_NUMBER}]'",
-            body: """<p>SUCCESSFUL: Job '${JOB_NAME} [${BUILD_NUMBER}]':</p>
-         <p>Check console output at "<a href="${BUILD_URL}">${JOB_NAME} [${BUILD_NUMBER}]</a>"</p>""",
-            recipientProviders: [[$class: 'DevelopersRecipientProvider']]
-    )
 }

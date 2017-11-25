@@ -1,3 +1,4 @@
+
 node{
     stage('Checkout'){
     checkout([$class: 'GitSCM', 
@@ -15,6 +16,10 @@ node{
         b: { sh "echo 'Jaco tests';/opt/gradle/bin/gradle jacocoTestReport" },
         c: { sh "echo 'Simple tests';/opt/gradle/bin/gradle test" }
         )
+    }
+    stage('Trigger Job'){
+        build job: 'MNTLAB-ataran-child1-build-job', parameters: [string(name: 'BRANCH_NAME', value: ''), string(name: 'BRANCH_NAME', value: 'ataran')],propagate: true, wait: true
+        
     }
     
 }

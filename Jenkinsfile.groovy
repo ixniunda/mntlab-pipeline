@@ -1,7 +1,5 @@
-//new Jenkinsfile
-
-
 node {
+    notifyStarted()
     def gradle_home = tool 'gradle3.3'
     stage('Preparation (Checking out)') {
         checkout scm: [$class: 'GitSCM', branches: [[name: '*/ivauchok']], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/mntlab-pipeline.git']]]
@@ -30,4 +28,19 @@ node {
     stage('Deployment') {
         sh "java -jar gradle-simple.jar"
     }
+    notifySuccessful()
+}
+
+def notifyStarted() { /* .. */ }
+def notifySuccessful() {
+    slackSend (color: '#00FF00', message: "SUCCESSFUL: Job '${JOB_NAME} [${BUILD_NUMBER}]' (${BUILD_URL})")
+    hipchatSend (color: 'GREEN', notify: true,
+            message: "SUCCESSFUL: Job '${JOB_NAME} [${BUILD_NUMBER}]' (${BUILD_URL})"
+    )
+    emailext (
+            subject: "SUCCESSFUL: Job '${JOB_NAME} [${BUILD_NUMBER}]'",
+            body: """<p>SUCCESSFUL: Job '${JOB_NAME} [${BUILD_NUMBER}]':</p>
+         <p>Check console output at "<a href="${BUILD_URL}">${JOB_NAME} [${BUILD_NUMBER}]</a>"</p>""",
+            recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+    )
 }

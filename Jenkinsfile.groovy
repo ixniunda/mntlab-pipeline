@@ -24,4 +24,7 @@ node {
     archiveArtifacts "pipeline-ivauchok-*.tar.gz"
     sh "curl -v --user 'nexus-service-user:123456' --upload-file 'pipeline-ivauchok-${BUILD_NUMBER}.tar.gz' 'http://nexus/repository/project-releases/pipeline/pipeline-ivauchok/${BUILD_NUMBER}/pipeline-ivauchok-${BUILD_NUMBER}.tar.gz'"
     }
+    stage('Asking for manual approval') {
+        input 'Do you want to deploy gradle-simple.jar?'
+    }
 }

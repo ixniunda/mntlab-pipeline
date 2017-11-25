@@ -69,7 +69,7 @@ node ('EPBYMINW1766') {
    
    try{
    stage('Deployment') {
-       sh '"${javaHome}/java -jar build/libs/gradle-simple.jar"'
+       sh "'${javaHome}/java -jar build/libs/gradle-simple.jar'"
    } } catch (Exception err){
        sh """curl -X POST -H 'Content-type: application/json' --data '{"text":"Pipeline FAILED at Deployment step"}' https://hooks.slack.com/services/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"""
    }

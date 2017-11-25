@@ -1,4 +1,4 @@
-node ('master') {
+node ('EPBYMINW1766') {
     //try{
    def grdHome = tool 'gradle3.3'
    def javaHome = tool 'java8'
@@ -55,7 +55,7 @@ node ('master') {
    stage('Packaging and Publishing results') {
        sh "tar -cvzf pipeline-amakhnach-'$BUILD_NUMBER'.tar.gz dsl.groovy Jenkinsfile build/libs/gradle-simple.jar"
        archiveArtifacts 'pipeline-amakhnach-${BUILD_NUMBER}.tar.gz'
-       sh "groovy -DVersionID='$BUILD_NUMBER' upload.groovy"
+       sh "/home/student/Downloads/groovy-2.4.12/bin/groovy -DVersionID='$BUILD_NUMBER' upload.groovy"
    } } catch (Exception err){
        sh """curl -X POST -H 'Content-type: application/json' --data '{"text":"Pipeline FAILED at Packaging and Publishing step"}' https://hooks.slack.com/services/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"""
    }

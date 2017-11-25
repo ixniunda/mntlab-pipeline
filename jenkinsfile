@@ -1,4 +1,4 @@
-node ('EPBYMINW2695') {
+node  {
   def grdlHome
   grdlHome = tool 'gradle3.3'
   def jvHome

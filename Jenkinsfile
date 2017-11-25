@@ -1,4 +1,4 @@
-def giturl='https://github.com/MNT-Lab/mntlgab-pipeline.git'
+def giturl='https://github.com/MNT-Lab/mntlab-pipeline.git'
 def BRANCH_NAME='*/uhramovich'
 node ('master'){
     stage('Preparation'){

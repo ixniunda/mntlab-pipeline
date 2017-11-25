@@ -20,11 +20,14 @@ node {
         sh "cp ${JENKINS_HOME}/workspace/Ihar\\ Vauchok/MNTLAB-ivauchok-child1-build-job/ivauchok_dsl_script.tar.gz ${JENKINS_HOME}/workspace/pipeline/"
     }
     stage('Packaging and Publishing results') {
-        sh "tar -zxvf ivauchok_dsl_script.tar.gz && tar -czf pipeline-ivauchok-${BUILD_NUMBER}.tar.gz ./jobs.groovy ./Jenkinsfile.groovy ./build/libs/gradle-simple.jar"
+        sh "tar -zxvf ivauchok_dsl_script.tar.gz && cp build/libs/gradle-simple.jar gradle-simple.jar && tar -czf pipeline-ivauchok-${BUILD_NUMBER}.tar.gz jobs.groovy Jenkinsfile.groovy gradle-simple.jar"
     archiveArtifacts "pipeline-ivauchok-*.tar.gz"
     sh "curl -v --user 'nexus-service-user:123456' --upload-file 'pipeline-ivauchok-${BUILD_NUMBER}.tar.gz' 'http://nexus/repository/project-releases/pipeline/pipeline-ivauchok/${BUILD_NUMBER}/pipeline-ivauchok-${BUILD_NUMBER}.tar.gz'"
     }
     stage('Asking for manual approval') {
         input 'Do you want to deploy gradle-simple.jar?'
+    }
+    stage('Deployment') {
+        sh "java -jar gradle-simple.jar"
     }
 }

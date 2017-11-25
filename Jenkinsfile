@@ -18,12 +18,32 @@ tools {
                 sh "gradle build"
             }
         }
-        stage('Archive') {
+stage('Build'){
             steps {
                 echo "Stage 3"
+                 parallel 'Cucumber Tests':{
+                 node{
+                 sh "gradle cucumber"    
+                 }
+                 }, 'Jacoco Tests':{
+                 node{
+                 sh "gradle jacocoTestReport"      
+                 }
+                },
+                'Unit Tests':{
+                 node{
+                 sh "gradle jacocoTestReport"      
+                 }
+                }
+            }
+        }        
+        stage('Archive') {
+            steps {
+                echo "Stage 4"
                 archiveArtifacts 'build/libs/gradle-simple.jar'
 
             }
         }
     }
 }
+

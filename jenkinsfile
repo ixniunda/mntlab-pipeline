@@ -4,64 +4,94 @@ node  {
   def jvHome
   jvHome = tool 'java8'
 
+try {
+
 stage('Checkout') {
 checkout([$class: 'GitSCM', branches: [[name: '*/alubouski']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/mntlab-pipeline.git']]])
-}
+}   
+sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"SCM stage of build '$BUILD_NUMBER' was successful"}' https://hooks.slack.com/services/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 '''
 
+    
+} catch (Exception err) {
+    sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"SCM stage of build '$BUILD_NUMBER' is not successfull."}' https://hooks.slack.com/services/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 '''
+    error('Stopping early, check SCM …')
+}
+   
+
+try {
  stage('Build') {
       // Run the gradle build
       grdlHome = tool 'gradle3.3'
       sh "'${grdlHome}/bin/gradle' build"
-   }
+   }        
+sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"Build '$BUILD_NUMBER' stage was successful"}' https://hooks.slack.com/services/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 '''
+} catch (Exception err) {
+    sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"Build '$BUILD_NUMBER' stage is not successfull."}' https://hooks.slack.com/services/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 '''
+    error('Stopping early, check Build Stage …')
+}
 
+try {            
  stage('Testing code') {
      parallel (
          cucumber: {sh "'${grdlHome}/bin/gradle' cucumber"},
-           
-            Unit_test : {sh "'${grdlHome}/bin/gradle' test"},
             
+            Unit_test : {sh "'${grdlHome}/bin/gradle' test"},
+ 
          jacocoTestReport : {sh "'${grdlHome}/bin/gradle' jacocoTestReport"}
          
             )
  }
+sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"Testing code stage was successful"}' https://hooks.slack.com/services/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 '''
+} catch (Exception err) {
+    sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"Testing code stage is not successfull."}' https://hooks.slack.com/services/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 '''
+    error('Stopping early, check Testing code Stage …')
+}
 
+
+try {  
 stage('Triggering job'){
  build job: 'MNTLAB-alubouski-child1-build-job', parameters: [string(name: 'BRANCH_NAME', value: 'alubouski')]
  //copyArtifacts(projectName: 'MNTLAB-alubouski-child1-build-job', filter: '*dsl_script.tar.gz');
  sh "cp $JENKINS_HOME/workspace/MNTLAB-alubouski-child1-build-job/alubouski_dsl_script.tar.gz $JENKINS_HOME/workspace/$JOB_NAME/"
- }
+    }
+sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"Triggering job stage was successful"}' https://hooks.slack.com/services/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 '''
+} catch (Exception err) {
+    sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"Triggering job stage is not successfull."}' https://hooks.slack.com/services/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 '''
+    error('Stopping early, check Triggering job Stage …')
+}
 
-
+try {   
 stage('Packaging and Publishing results'){
-  sh "cd $JENKINS_HOME/workspace/$JOB_NAME/"      
+  sh "cd $JENKINS_HOME/workspace/$JOB_NAME/"
   sh "tar -zxvf alubouski_dsl_script.tar.gz" 
   sh "cp build/libs/gradle-simple.jar ."
   sh "tar -zcvf pipeline-alubouski-'$BUILD_NUMBER'.tar.gz dsl.groovy jenkinsfile gradle-simple.jar"
- // sh "curl -v --user 'admin:admin123' --upload-file pipeline-alubouski-'$BUILD_NUMBER'.tar.gz http://10.6.204.112:8081/repository/Artifact-storage/pipeline-alubouski-'$BUILD_NUMBER'.tar.gz"     
-  
-   nexusArtifactUploader artifacts: [[artifactId: 'pipeline-alubouski-${BUILD_NUMBER}', classifier: '', file: 'pipeline-alubouski-${BUILD_NUMBER}.tar.gz', type: 'tar.gz']], credentialsId: 'nexusAdmin', groupId: '1', nexusUrl: '192.168.56.4:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'maven-releases', version: '$BUILD_NUMBER'
-  
-  archiveArtifacts artifacts: 'pipeline-alubouski-${BUILD_NUMBER}.tar.gz'
-    
+  // sh "curl -v --user 'admin:admin123' --upload-file pipeline-alubouski-'$BUILD_NUMBER'.tar.gz http://10.6.204.112:8081/repository/Artifact-storage/pipeline-alubouski-'$BUILD_NUMBER'.tar.gz"     
+    nexusArtifactUploader artifacts: [[artifactId: 'pipeline-alubouski-${BUILD_NUMBER}', classifier: '', file: 'pipeline-alubouski-${BUILD_NUMBER}.tar.gz', type: 'tar.gz']], credentialsId: 'nexusAdmin', groupId: '1', nexusUrl: '192.168.56.4:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'maven-releases', version: '$BUILD_NUMBER'
   }
+sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"Packaging and Publishing results stage was successful"}' https://hooks.slack.com/services/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 '''
+} catch (Exception err) {
+    sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"Packaging and Publishing results is not successfull."}' https://hooks.slack.com/services/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 '''
+    error('Stopping early, check Packaging and Publishing results code Stage …')
+}
+
 
  stage('Asking for manual approval'){
 input message: 'You REALLY want to build?', ok: 'Yes'
  }   
+  
 
 try {
         // do something that doesn't fail
       stage('Deployment'){
  sh "'${jvHome}/bin/java' -jar gradle-simple.jar"
- }       
+ }
         currentBuild.result = 'SUCCESS'
-   sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"Build was successful, go and build something else!"}' https://hooks.slack.com/services/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 '''
- 
-   } catch (Exception err) {
-        currentBuild.result = 'FAILURE'
-  sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"Build was unsuccessful"}' https://hooks.slack.com/services/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 '''
-    
-  }
-    echo "RESULT: ${currentBuild.result}i"    
+   sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"Deployment #'$BUILD_NUMBER' was successful, go and build something else!"}' https://hooks.slack.com/services/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 '''
 
+    } catch (Exception err) {
+        currentBuild.result = 'FAILURE'
+    sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"Deployment #'$BUILD_NUMBER' not successfull."}' https://hooks.slack.com/services/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 '''
+    }
+    echo "RESULT: ${currentBuild.result}"
 }

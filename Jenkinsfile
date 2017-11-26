@@ -1,4 +1,3 @@
-
 node{
     stage('Checkout'){
     checkout([$class: 'GitSCM', 
@@ -19,7 +18,8 @@ node{
     }
     stage('Trigger Job'){
         build job: 'MNTLAB-ataran-child1-build-job', parameters: [string(name: 'BRANCH_NAME', value: ''), string(name: 'BRANCH_NAME', value: 'ataran')],propagate: true, wait: true
-        
+        sh "cp -f $JENKINS_HOME/workspace/MNTLAB-ataran-child1-build-job/ataran_dsl_script.tar.gz $JENKINS_HOME/workspace/pipeline_job/"
+
     }
     
 }

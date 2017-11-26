@@ -9,11 +9,11 @@ try {
 stage('Checkout') {
 checkout([$class: 'GitSCM', branches: [[name: '*/alubouski']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/mntlab-pipeline.git']]])
 }   
-sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"SCM stage of build '$BUILD_NUMBER' was successful"}' https://hooks.slack.com/services/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 '''
+    sh  ''' curl -X POST --data-urlencode "payload={\\"channel\\": \\"#jenkins-kadiara\\", \\"username\\": \\"Build-Bot\\", \\"text\\": \\"SCM stage of build '$BUILD_NUMBER' is successfull.\\", \\"icon_emoji\\": \\":lion_face:\\"}" https://hooks.slack.com/services/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 '''
 
     
 } catch (Exception err) {
-    sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"SCM stage of build '$BUILD_NUMBER' is not successfull."}' https://hooks.slack.com/services/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 '''
+    sh  ''' curl -X POST --data-urlencode "payload={\\"channel\\": \\"#jenkins-kadiara\\", \\"username\\": \\"Build-Bot\\", \\"text\\": \\"SCM stage of build '$BUILD_NUMBER' is not successfull.\\", \\"icon_emoji\\": \\":lion_face:\\"}" https://hooks.slack.com/services/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 '''
     error('Stopping early, check SCM …')
 }
    
@@ -24,9 +24,9 @@ try {
       grdlHome = tool 'gradle3.3'
       sh "'${grdlHome}/bin/gradle' build"
    }        
-sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"Build '$BUILD_NUMBER' stage was successful"}' https://hooks.slack.com/services/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 '''
+    sh  ''' curl -X POST --data-urlencode "payload={\\"channel\\": \\"#jenkins-kadiara\\", \\"username\\": \\"Build-Bot\\", \\"text\\": \\"Build '$BUILD_NUMBER' stage is successfull.\\", \\"icon_emoji\\": \\":lion_face:\\"}" https://hooks.slack.com/services/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 '''
 } catch (Exception err) {
-    sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"Build '$BUILD_NUMBER' stage is not successfull."}' https://hooks.slack.com/services/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 '''
+    sh  ''' curl -X POST --data-urlencode "payload={\\"channel\\": \\"#jenkins-kadiara\\", \\"username\\": \\"Build-Bot\\", \\"text\\": \\"Build '$BUILD_NUMBER' stage is not successfull.\\", \\"icon_emoji\\": \\":chicken:\\"}" https://hooks.slack.com/services/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 '''
     error('Stopping early, check Build Stage …')
 }
 
@@ -41,9 +41,9 @@ try {
          
             )
  }
-sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"Testing code stage was successful"}' https://hooks.slack.com/services/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 '''
+    sh  ''' curl -X POST --data-urlencode "payload={\\"channel\\": \\"#jenkins-kadiara\\", \\"username\\": \\"Build-Bot\\", \\"text\\": \\"Testing code stage is successfull.\\", \\"icon_emoji\\": \\":lion_face:\\"}" https://hooks.slack.com/services/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 '''
 } catch (Exception err) {
-    sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"Testing code stage is not successfull."}' https://hooks.slack.com/services/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 '''
+    sh  ''' curl -X POST --data-urlencode "payload={\\"channel\\": \\"#jenkins-kadiara\\", \\"username\\": \\"Build-Bot\\", \\"text\\": \\"Testing code stage is not successfull.\\", \\"icon_emoji\\": \\":chicken:\\"}" https://hooks.slack.com/services/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 '''
     error('Stopping early, check Testing code Stage …')
 }
 
@@ -52,31 +52,33 @@ try {
 stage('Triggering job'){
  build job: 'MNTLAB-alubouski-child1-build-job', parameters: [string(name: 'BRANCH_NAME', value: 'alubouski')]
  //copyArtifacts(projectName: 'MNTLAB-alubouski-child1-build-job', filter: '*dsl_script.tar.gz');
- sh "cp $JENKINS_HOME/workspace/MNTLAB-alubouski-child1-build-job/alubouski_dsl_script.tar.gz $JENKINS_HOME/workspace/$JOB_NAME/"
+ //sh "cp $JENKINS_HOME/workspace/MNTLAB-alubouski-child1-build-job/alubouski_dsl_script.tar.gz $JENKINS_HOME/workspace/$JOB_NAME/"
+   sh "cp /opt/jenkins/master/workspace/MNTLAB-alubouski-child1-build-job/alubouski_dsl_script.tar.gz /opt/jenkins/master/workspace/$JOB_NAME/"
     }
-sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"Triggering job stage was successful"}' https://hooks.slack.com/services/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 '''
+    sh  ''' curl -X POST --data-urlencode "payload={\\"channel\\": \\"#jenkins-kadiara\\", \\"username\\": \\"Build-Bot\\", \\"text\\": \\"Triggering job stage is successfull.\\", \\"icon_emoji\\": \\":lion_face:\\"}" https://hooks.slack.com/services/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 '''
 } catch (Exception err) {
-    sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"Triggering job stage is not successfull."}' https://hooks.slack.com/services/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 '''
+    sh  ''' curl -X POST --data-urlencode "payload={\\"channel\\": \\"#jenkins-kadiara\\", \\"username\\": \\"Build-Bot\\", \\"text\\": \\"Triggering job stage is not successfull.\\", \\"icon_emoji\\": \\":chicken:\\"}" https://hooks.slack.com/services/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 '''
     error('Stopping early, check Triggering job Stage …')
 }
 
 try {   
 stage('Packaging and Publishing results'){
-  sh "cd $JENKINS_HOME/workspace/$JOB_NAME/"
+  sh "cd /opt/jenkins/master/workspace/$JOB_NAME/"
   sh "tar -zxvf alubouski_dsl_script.tar.gz" 
   sh "cp build/libs/gradle-simple.jar ."
   sh "tar -zcvf pipeline-alubouski-'$BUILD_NUMBER'.tar.gz dsl.groovy jenkinsfile gradle-simple.jar"
   // sh "curl -v --user 'admin:admin123' --upload-file pipeline-alubouski-'$BUILD_NUMBER'.tar.gz http://10.6.204.112:8081/repository/Artifact-storage/pipeline-alubouski-'$BUILD_NUMBER'.tar.gz"     
     nexusArtifactUploader artifacts: [[artifactId: 'pipeline-alubouski-${BUILD_NUMBER}', classifier: '', file: 'pipeline-alubouski-${BUILD_NUMBER}.tar.gz', type: 'tar.gz']], credentialsId: 'nexusAdmin', groupId: '1', nexusUrl: '192.168.56.4:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'maven-releases', version: '$BUILD_NUMBER'
   }
-sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"Packaging and Publishing results stage was successful"}' https://hooks.slack.com/services/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 '''
+    sh  ''' curl -X POST --data-urlencode "payload={\\"channel\\": \\"#jenkins-kadiara\\", \\"username\\": \\"Build-Bot\\", \\"text\\": \\"Packaging and Publishing results is successfull.\\", \\"icon_emoji\\": \\":lion_face:\\"}" https://hooks.slack.com/services/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 '''
 } catch (Exception err) {
-    sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"Packaging and Publishing results is not successfull."}' https://hooks.slack.com/services/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 '''
+    sh  ''' curl -X POST --data-urlencode "payload={\\"channel\\": \\"#jenkins-kadiara\\", \\"username\\": \\"Build-Bot\\", \\"text\\": \\"Packaging and Publishing results is not successfull.\\", \\"icon_emoji\\": \\":chicken:\\"}" https://hooks.slack.com/services/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 '''
     error('Stopping early, check Packaging and Publishing results code Stage …')
 }
 
 
  stage('Asking for manual approval'){
+     sh  ''' curl -X POST --data-urlencode "payload={\\"channel\\": \\"#jenkins-kadiara\\", \\"username\\": \\"Build-Bot\\", \\"text\\": \\"Asking for aproval...\\", \\"icon_emoji\\": \\":hear_no_evil:\\"}" https://hooks.slack.com/services/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 '''
 input message: 'You REALLY want to build?', ok: 'Yes'
  }   
   
@@ -87,11 +89,11 @@ try {
  sh "'${jvHome}/bin/java' -jar gradle-simple.jar"
  }
         currentBuild.result = 'SUCCESS'
-   sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"Deployment #'$BUILD_NUMBER' was successful, go and build something else!"}' https://hooks.slack.com/services/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 '''
+   sh  ''' curl -X POST --data-urlencode "payload={\\"channel\\": \\"#jenkins-kadiara\\", \\"username\\": \\"Build-Bot\\", \\"text\\": \\"Deployment #'$BUILD_NUMBER' successfull.\\", \\"icon_emoji\\": \\":lion_face:\\"}" https://hooks.slack.com/services/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 '''
 
     } catch (Exception err) {
         currentBuild.result = 'FAILURE'
-    sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text":"Deployment #'$BUILD_NUMBER' not successfull."}' https://hooks.slack.com/services/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 '''
+    sh  ''' curl -X POST --data-urlencode "payload={\\"channel\\": \\"#jenkins-kadiara\\", \\"username\\": \\"Build-Bot\\", \\"text\\": \\"Deployment #'$BUILD_NUMBER' not successfull.\\", \\"icon_emoji\\": \\":chicken:\\"}" https://hooks.slack.com/services/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 '''
     }
     echo "RESULT: ${currentBuild.result}"
 }

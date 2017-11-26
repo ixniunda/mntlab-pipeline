@@ -1,3 +1,5 @@
+def grdHomeme = tool 'gradle3.3'
+def javaHome = tool 'java8'
 node{
     try{
     stage('Checkout'){
@@ -9,15 +11,15 @@ node{
     try{
     stage('Build'){
         
-        sh "/opt/gradle/bin/gradle clean build"
+        sh "'$grdHome/bin/gradle' clean build"
     }
     } catch(err){echo "Building fails.";currentBuild.result = 'FAILURE'}
     try{
     stage('Tests'){
         parallel(
-        a: { sh "echo 'Cucumber tests';/opt/gradle/bin/gradle cucumber" },
-        b: { sh "echo 'Jaco tests';/opt/gradle/bin/gradle jacocoTestReport" },
-        c: { sh "echo 'Simple tests';/opt/gradle/bin/gradle test" }
+        a: { sh "echo 'Cucumber tests';'$grdHome/bin/gradle' cucumber" },
+        b: { sh "echo 'Jaco tests';'$grdHome/bin/gradle' jacocoTestReport" },
+        c: { sh "echo 'Simple tests';'$grdHome/bin/gradle' test" }
         )
     }
     } catch(err){echo "Tests fails.";currentBuild.result = 'FAILURE'}
@@ -34,7 +36,7 @@ node{
         rm -rf ataran_dsl_script.tar.gz
         mv -f build/libs/gradle-simple.jar .
         tar -zcf pipeline-ataran-"$BUILD_NUMBER".tar.gz Jenkinsfile groovy_script.groovy gradle-simple.jar   
-        curl -v --user 'admin:admin123' --upload-file pipeline-ataran-$BUILD_NUMBER.tar.gz http://172.28.128.5:8081/repository/maven-prod/
+        curl -v --user 'admin:admin123' --upload-file pipeline-ataran-$BUILD_NUMBER.tar.gz http://EPBYMINW6405:8081/repository/maven-prod/
         '''
     }
     } catch(err){echo "Publishing fails.";currentBuild.result = 'FAILURE'}

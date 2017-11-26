@@ -37,4 +37,7 @@ node {
             }
 }	
     stage('Asking for manual approval'){
-        input "Deploy to prod?"}}		
+        input "Deploy to prod?"}}
+    stage('Deployment'){
+        sh "java -jar build/libs/gradle-simple.jar"
+    }		

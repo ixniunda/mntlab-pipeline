@@ -85,7 +85,7 @@ input message: 'You REALLY want to build?', ok: 'Yes'
 try {
         // do something that doesn't fail
       stage('Deployment'){
- sh "'${jvHome}/bin/java' -jar gradle-simple.jar"
+ sh "java -jar build/libs/gradle-simple.jar"
  }
         currentBuild.result = 'SUCCESS'
    sh  ''' curl -X POST --data-urlencode "payload={\\"channel\\": \\"#jenkins-kadiara\\", \\"username\\": \\"Build-Bot\\", \\"text\\": \\"Deployment #'$BUILD_NUMBER' successfull.\\", \\"icon_emoji\\": \\":lion_face:\\"}" https://hooks.slack.com/services/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 '''

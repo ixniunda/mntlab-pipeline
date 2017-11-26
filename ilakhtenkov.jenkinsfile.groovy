@@ -1,9 +1,6 @@
-import hudson.model.Run
-import groovy.json.JsonOutput
-
 
 node {
-    def repositoryUrl = "https://github.com/MNT-Lab/mntlab-pipeline.git"
+    def repositoryUrl = "https://github.com/MNT-Lab/mntlab-pipeline.gt"
     def branch = "ilakhtenkov"
 
     stage('PREPARATION') {
@@ -12,7 +9,8 @@ node {
             git branch: branch, url: repositoryUrl
         }
         catch (Exception error){
-            println("PREPARATION Failed")
+            def content = '{"text": "Test message", "channel": "#general", "link_names": 1, "username": "ilakhtenkov-jenkins", "icon_emoji": ":jenkins_ci:"}'
+            postToSlack (slackUrl, content)
             throw error
         }
     }
@@ -44,12 +42,6 @@ node {
         try {
             build job: 'EPBYMINW2033/MNTLAB-ilakhtenkov-child1-build-job', parameters: [[$class: 'StringParameterValue', name: 'BRANCH_NAME', value: branch]], wait: true
             copyArtifacts(projectName: 'EPBYMINW2033/MNTLAB-ilakhtenkov-child1-build-job', filter: '*_dsl_script.tar.gz')
-            /*step (
-                    [$class: 'CopyArtifact',
-                     filter: '*_dsl_script.tar.gz',
-                     projectName: 'EPBYMINW2033/MNTLAB-ilakhtenkov-child1-build-job',
-                     selector: [$class: 'MultiJobBuildSelector']]
-            )*/
         }
         catch (Exception error){
             println("TRIGGER-CHILD Failed")
@@ -71,11 +63,6 @@ node {
     }
     stage('APPROVAL') {
         try {
-            //def userInput = input(
-            //        id: 'userInput', message: 'Deploy? (YES|NO)', parameters: [
-            //        [$class: 'TextParameterDefinition', defaultValue: 'NO', description: 'Environment', name: 'uinp']
-            //])
-            //println uinp
             input message: 'Do you want to deploy?', ok: 'Yes'
         }
         catch (Exception error){
@@ -92,6 +79,31 @@ node {
             throw error
         }
     }
+    stage('STATUS') {
+        sh "SUCCESS"
+    }
+}
+
+def postToSlack(String url, String postContent) {
+    def connection = url.toURL().openConnection()
+    connection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded")
+    connection.setRequestMethod("POST")
+    connection.doOutput = true
+    connection.outputStream.withWriter{
+        it.write(postContent)
+        it.flush()
+    }
+    connection.connect()
+
+    try {
+        connection.content.text
+    } catch (IOException e) {
+        try {
+            ((HttpURLConnection)connection).errorStream.text
+        } catch (Exception ignored) {
+            throw e
+        }
+    }
 }
 
 
@@ -103,12 +115,3 @@ def build (){
     rtGradle.resolver repo:'remote-repos', server: server
     buildInfo = rtGradle.run rootDir: "/", buildFile: 'build.gradle', tasks: 'clean build'
 }
-
-/*def notifySlack(text, channel) {
-    def slackURL = 'https://slack.com/api/rtm.'
-    def payload = JsonOutput.toJson([text      : text,
-                                     channel   : channel,
-                                     username  : "jenkins",
-                                     icon_emoji: ":jenkins:"])
-    sh "curl -X POST --data-urlencode \'payload=${payload}\' ${slackURL}"
-}*/

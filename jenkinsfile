@@ -1,4 +1,3 @@
-
 def brname = "ilahutka"
 def giturl = "https://github.com/MNT-Lab/mntlab-pipeline.git"
 def job = "_pipeline"
@@ -20,12 +19,19 @@ node {
        )
     }
     stage('Triggering job, fetching artefact') {
-    build job: "${tjob}", parameters: [string(name: 'BRANCH_NAME', value: "${brname}")], propagate: true, wait: true
-    sh "cp -f ${JENKINS_HOME}/workspace/${tjob}/${brname}_dsl_script.tar.gz ${JENKINS_HOME}/workspace/${job}/${brname}_dsl_script.tar.gz"
+       build job: "${tjob}", parameters: [string(name: 'BRANCH_NAME', value: "${brname}")], propagate: true, wait: true
+       sh "cp -f ${JENKINS_HOME}/workspace/${tjob}/${brname}_dsl_script.tar.gz ${JENKINS_HOME}/workspace/${job}/${brname}_dsl_script.tar.gz"
     }   
     stage('Packaging, publishing results') {
-    sh "tar xzvf ${brname}_dsl_script.tar.gz jobs.groovy; cp build/libs/gradle-simple.jar gradle-simple.jar; tar czvf pipeline-${brname}-${BUILD_NUMBER}.tar.gz jobs.groovy jenkinsfile gradle-simple.jar"
-    sh "curl -v -u jenkins:jenkins --upload-file pipeline-${brname}-${BUILD_NUMBER}.tar.gz http://172.28.128.27:8081/repository/project-releases/Releases/pipeline/${BUILD_NUMBER}/pipeline-${brname}-${BUILD_NUMBER}.tar.gz"
-    archiveArtifacts artifacts: "pipeline-${brname}-${BUILD_NUMBER}.tar.gz", onlyIfSuccessful: true
+       sh "tar xzvf ${brname}_dsl_script.tar.gz jobs.groovy; cp build/libs/gradle-simple.jar gradle-simple.jar; tar czvf pipeline-${brname}-${BUILD_NUMBER}.tar.gz jobs.groovy jenkinsfile gradle-simple.jar"
+       sh "curl -v -u jenkins:jenkins --upload-file pipeline-${brname}-${BUILD_NUMBER}.tar.gz http://172.28.128.27:8081/repository/project-releases/Releases/pipeline/${BUILD_NUMBER}/pipeline-${brname}-${BUILD_NUMBER}.tar.gz"
+       archiveArtifacts artifacts: "pipeline-${brname}-${BUILD_NUMBER}.tar.gz", onlyIfSuccessful: true
     }
+    stage('Asking for manual approval') {
+       input message: 'Deploy the artifact?', ok: 'yes'
+    }
+    stage('Deployment') {
+       sh "java -jar gradle-simple.jar"
+    }
+    
 }

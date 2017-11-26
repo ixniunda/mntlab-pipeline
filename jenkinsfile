@@ -4,7 +4,15 @@ node {
       checkout([$class: 'GitSCM', branches: [[name: '*/ilahutka']], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/mntlab-pipeline.git']]])
    }
    stage('Building code') { 
-      sh '/opt/gradle-4.3/bin/gradle clean build'
+      sh "/opt/gradle-3.5/bin/gradle clean build"
    } 
+    stage('Testing code') {
+       parallel (
+       cucumber: { sh "/opt/gradle-3.5/bin/gradle cucumber" },
+       jacoco: { sh "/opt/gradle-3.5/bin/gradle jacocoTestReport" },
+       test: { sh "/opt/gradle-3.5/bin/gradle test" }
+       )
+    }
    
 }
+

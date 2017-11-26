@@ -1,13 +1,22 @@
-node {
+node('EPBYMINW2470') {
     def mvnHome = tool 'gradle3.3'
+    try{
     stage('Preparation') {
-// Get some code from a GitHub repository
         checkout([$class: 'GitSCM', branches: [[name: 'kkaliada']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/mntlab-pipeline.git']]])
+    }}
+    catch (Exception err){
+        sh"""curl -X POST -H 'Content-type: application/json' --data '{"text":"Preparation step was failed"}' https://hooks.slack.com/services/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"""
+
     }
+    try {
     stage('Build') {
         sh "'${mvnHome}/bin/gradle' build"
+    }}
+    catch (Exception err){
+        sh"""curl -X POST -H 'Content-type: application/json' --data '{"text":"Build step was failed"}' https://hooks.slack.com/services/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"""
     }
-    stage('Testt')
+    try{
+    stage('Test')
             {
                 parallel (
                         "Cucumber Test":
@@ -18,29 +27,55 @@ node {
                         "JUnit Test" :
                                 {
 
-                            sh "'${mvnHome}/bin/gradle' test"
+                                    sh "'${mvnHome}/bin/gradle' test"
 
                                 },
                         "Jacoco Test" :
                                 {
                                     sh "'${mvnHome}/bin/gradle' jacocoTestReport"
                                 })
-            }
+            }}
+    catch (Exception err){
+        sh"""curl -X POST -H 'Content-type: application/json' --data '{"text":"Test step was failed"}' https://hooks.slack.com/services/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"""
+    }
+    try{
     stage('Triggering job and fetching artefact after finishing') {
         build job: 'MNTLAB-kkaliada-child1-build-job', parameters: [string( name: 'BRANCH_NAME', value: 'kkaliada')]
         copyArtifacts(projectName: 'MNTLAB-kkaliada-child1-build-job', filter: 'kkaliada_dsl_script.tar.gz')
+    }}
+    catch (Exception err){
+        sh"""curl -X POST -H 'Content-type: application/json' --data '{"text":"Triggering job and fetching artefact after finishing step was failed"}' https://hooks.slack.com/services/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"""
     }
+    try{
     stage('Packaging and Publishing results')
             {
                 sh"tar -xvf kkaliada_dsl_script.tar.gz"
                 sh"tar -cvzf pipeline-kkaliada-'$BUILD_NUMBER'.tar.gz dsl_jobs.groovy jenkinsfile build/libs/gradle-simple.jar"
-            }
-}	
+                nexusArtifactUploader artifacts: [[artifactId: "pipeline-kkaliada-${BUILD_NUMBER}", classifier: '', file: 'pipeline-kkaliada-$BUILD_NUMBER.tar.gz', type: 'tar.gz']], credentialsId: '7c8a7104-42b4-4d3c-8fc3-51175480bcfd', groupId: 'jenkinsfile', nexusUrl: '10.0.0.14:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'LabTestRl', version: '3.6.1'
+            }}
+    catch (Exception err){
+        sh"""curl -X POST -H 'Content-type: application/json' --data '{"text":"Packaging and Publishing results step was failed"}' https://hooks.slack.com/services/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"""
+
+    }
+    try{
     stage('Asking for manual approval'){
         input "Deploy to prod?"}}
+        catch (Exception err){
+            sh"""curl -X POST -H 'Content-type: application/json' --data '{"text":"approval step was failed"}' https://hooks.slack.com/services/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"""
+
+        }
+    try{
     stage('Deployment'){
         sh "java -jar build/libs/gradle-simple.jar"
+    }}
+    catch (Exception err){
+        sh"""curl -X POST -H 'Content-type: application/json' --data '{"text":"Packaging and Publishing results step was failed"}' https://hooks.slack.com/services/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"""
+
     }
-	stage('Sending status'){
+
+    stage('Sending status'){
          sh"""curl -X POST -H 'Content-type: application/json' --data '{"text":"Deploy to prod was successful completed "}' https://hooks.slack.com/services/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"""
-    }		
+    }
+
+}
+

@@ -40,4 +40,7 @@ node {
         input "Deploy to prod?"}}
     stage('Deployment'){
         sh "java -jar build/libs/gradle-simple.jar"
+    }
+	stage('Sending status'){
+         sh"""curl -X POST -H 'Content-type: application/json' --data '{"text":"Deploy to prod was successful completed "}' https://hooks.slack.com/services/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"""
     }		

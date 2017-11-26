@@ -51,9 +51,8 @@ try {
 try {  
 stage('Triggering job'){
  build job: 'MNTLAB-alubouski-child1-build-job', parameters: [string(name: 'BRANCH_NAME', value: 'alubouski')]
- //copyArtifacts(projectName: 'MNTLAB-alubouski-child1-build-job', filter: '*dsl_script.tar.gz');
- //sh "cp $JENKINS_HOME/workspace/MNTLAB-alubouski-child1-build-job/alubouski_dsl_script.tar.gz $JENKINS_HOME/workspace/$JOB_NAME/"
-   sh "cp /opt/jenkins/master/workspace/MNTLAB-alubouski-child1-build-job/alubouski_dsl_script.tar.gz /opt/jenkins/master/workspace/$JOB_NAME/"
+ copyArtifacts(projectName: 'MNTLAB-alubouski-child1-build-job', filter: '*dsl_script.tar.gz');
+ //sh "cp /opt/jenkins/master/workspace/MNTLAB-alubouski-child1-build-job/alubouski_dsl_script.tar.gz /opt/jenkins/master/workspace/$JOB_NAME/"
     }
     sh  ''' curl -X POST --data-urlencode "payload={\\"channel\\": \\"#jenkins-kadiara\\", \\"username\\": \\"Build-Bot\\", \\"text\\": \\"Triggering job stage is successfull.\\", \\"icon_emoji\\": \\":lion_face:\\"}" https://hooks.slack.com/services/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 '''
 } catch (Exception err) {
@@ -63,10 +62,10 @@ stage('Triggering job'){
 
 try {   
 stage('Packaging and Publishing results'){
-  sh "cd /opt/jenkins/master/workspace/$JOB_NAME/"
+  //sh "cd /opt/jenkins/master/workspace/$JOB_NAME/"
   sh "tar -zxvf alubouski_dsl_script.tar.gz" 
-  sh "cp build/libs/gradle-simple.jar ."
-  sh "tar -zcvf pipeline-alubouski-'$BUILD_NUMBER'.tar.gz dsl.groovy jenkinsfile gradle-simple.jar"
+  //sh "cp build/libs/gradle-simple.jar ."
+  sh "tar -zcvf pipeline-alubouski-'$BUILD_NUMBER'.tar.gz dsl.groovy jenkinsfile build/libs/gradle-simple.jar"
   // sh "curl -v --user 'admin:admin123' --upload-file pipeline-alubouski-'$BUILD_NUMBER'.tar.gz http://10.6.204.112:8081/repository/Artifact-storage/pipeline-alubouski-'$BUILD_NUMBER'.tar.gz"     
     nexusArtifactUploader artifacts: [[artifactId: 'pipeline-alubouski-${BUILD_NUMBER}', classifier: '', file: 'pipeline-alubouski-${BUILD_NUMBER}.tar.gz', type: 'tar.gz']], credentialsId: 'nexusAdmin', groupId: '1', nexusUrl: '192.168.56.4:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'maven-releases', version: '$BUILD_NUMBER'
   }

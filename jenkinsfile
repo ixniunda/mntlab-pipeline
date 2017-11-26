@@ -51,7 +51,7 @@ node('EPBYMINW2470') {
             {
                 sh"tar -xvf kkaliada_dsl_script.tar.gz"
                 sh"tar -cvzf pipeline-kkaliada-'$BUILD_NUMBER'.tar.gz dsl_jobs.groovy jenkinsfile build/libs/gradle-simple.jar"
-                nexusArtifactUploader artifacts: [[artifactId: "pipeline-kkaliada-${BUILD_NUMBER}", classifier: '', file: 'pipeline-kkaliada-$BUILD_NUMBER.tar.gz', type: 'tar.gz']], credentialsId: '7c8a7104-42b4-4d3c-8fc3-51175480bcfd', groupId: 'jenkinsfile', nexusUrl: '10.0.0.14:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'LabTestRl', version: '3.6.1'
+		sh"curl -v -u admin:admin123 --upload-file pipeline-kkaliada-'$BUILD_NUMBER'.tar.gz http://10.0.0.14:8081/repository/LabTestRl/org/pipeline-kkaliada/'$BUILD_NUMBER'/pipeline-kkaliada-'$BUILD_NUMBER'.tar.gz
             }}
     catch (Exception err){
         sh"""curl -X POST -H 'Content-type: application/json' --data '{"text":"Packaging and Publishing results step was failed"}' https://hooks.slack.com/services/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"""

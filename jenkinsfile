@@ -1,7 +1,12 @@
+def brname = "ilahutka"
+def giturl = "https://github.com/MNT-Lab/mntlab-pipeline.git"
+def job = "_pipeline"
+def tjob = "MNTLAB-ilahutka-child1-build-job"
+
 node {
    
    stage('Preparation - Checking out') { 
-      checkout([$class: 'GitSCM', branches: [[name: '*/ilahutka']], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/mntlab-pipeline.git']]])
+      checkout([$class: 'GitSCM', branches: [[name: "*/${brname}"]], userRemoteConfigs: [[url: "${giturl}"]]])
    }
    stage('Building code') { 
       sh "/opt/gradle-3.5/bin/gradle clean build"
@@ -13,6 +18,9 @@ node {
        test: { sh "/opt/gradle-3.5/bin/gradle test" }
        )
     }
-   
+    stage('Triggering job, fetching artefact ') {
+    build job: "${tjob}", parameters: [string(name: 'BRANCH_NAME', value: "${brname}")], propagate: true, wait: true
+    sh "cp -f ${JENKINS_HOME}/workspace/${tjob}/${brname}_dsl_script.tar.gz ${JENKINS_HOME}/workspace/${job}/${brname}_dsl_script.tar.gz"
+    }   
+    
 }
-

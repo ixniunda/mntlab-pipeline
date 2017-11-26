@@ -35,5 +35,6 @@ node {
                 sh"tar -xvf kkaliada_dsl_script.tar.gz"
                 sh"tar -cvzf pipeline-kkaliada-'$BUILD_NUMBER'.tar.gz dsl_jobs.groovy jenkinsfile build/libs/gradle-simple.jar"
             }
-}
-
+}	
+    stage('Asking for manual approval'){
+        input "Deploy to prod?"}}		

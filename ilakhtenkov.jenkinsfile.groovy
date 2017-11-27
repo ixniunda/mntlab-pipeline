@@ -86,7 +86,7 @@ node {
         }
     }
     stage('STATUS') {
-        sh "SUCCESS"
+        println "SUCCESS"
         postToSlack ("SUCCESS", "bot.ilakhtenkov", "#general")
     }
 }

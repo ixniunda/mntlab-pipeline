@@ -19,7 +19,7 @@ node {
     }
     stage('BUILD') {
         try {
-            sh "${GRADLE_HOME}/gradle clean build"
+            sh "${GRADLE_HOME}/bin/gradle clean build"
         }
         catch (Exception error){
             println("BUILD Failed")
@@ -29,11 +29,11 @@ node {
     stage('TEST') {
         try {
             parallel junitTest: {
-                sh "${GRADLE_HOME}/gradle test"
+                sh "${GRADLE_HOME}/bin/gradle test"
             }, jacocoTest: {
-                sh "${GRADLE_HOME}/gradle jacocoTestReport"
+                sh "${GRADLE_HOME}/bin/gradle jacocoTestReport"
             }, cucumberTest: {
-                sh "${GRADLE_HOME}/gradle cucumber"
+                sh "${GRADLE_HOME}/bin/gradle cucumber"
             }
         }
         catch (Exception error){

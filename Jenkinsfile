@@ -38,6 +38,7 @@ node ('EPBYMINW3093') {
     }
     stage ('Packaging and Publishing') {
         try {
+	pwd ()
         sh ("cp ../MNTLAB-kshchura-child1-build-job/dsl_main.groovy .")
 
         sh ("cp build/libs/gradle-simple.jar .")

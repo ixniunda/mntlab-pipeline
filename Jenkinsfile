@@ -1,6 +1,6 @@
 def grdHomeme = tool 'gradle3.3'
 def javaHome = tool 'java8'
-node{
+node('EPBYMINW6405'){
     try{
     stage('Checkout'){
     checkout([$class: 'GitSCM', 

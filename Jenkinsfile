@@ -36,7 +36,7 @@ node {
                         sh "gradle jacocoTestReport"
                     },
                     'Unit Tests': {
-                        sh "gradle jacocoTestReport2"
+                        sh "gradle test"
                     }
         }
     }

@@ -5,8 +5,8 @@
 node {
     def repositoryUrl = "https://github.com/MNT-Lab/mntlab-pipeline.git"
     def branch = "ilakhtenkov"
-    def userName = ""
-    def channel = ""
+    def userName = "bot.ilakhtenkov"
+    def channel = "#general"
     def webhookUrl = "https://hooks.slack.com/services/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"
 
     stage('PREPARATION') {

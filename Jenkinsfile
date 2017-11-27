@@ -25,7 +25,8 @@ node () {
 
 
   	 stage('Preparation') {
-    	    try {
+
+          try {
              checkout  changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: '*/adudko']],
                         doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [],
                         userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/mntlab-pipeline.git']]]
@@ -50,19 +51,20 @@ node () {
     }
 
     stage('Testing code') {
-        try {
-       parallel (
-          cucumber : { sh "'${GRADLE_HOME}/bin/gradle' cucumber" },
-          jacoco   : { sh "'${GRADLE_HOME}/bin/gradle' jacocoTestReport" },
-          unit     : { sh "'${GRADLE_HOME}/bin/gradle' test" }
-          )
-        }
 
-     catch (e) {
-        notifySlack('FAILED', "```stage: ${stage}```")
-        throw e
-      }
-    }
+            try {
+               parallel (
+                  cucumber : { sh "'${GRADLE_HOME}/bin/gradle' cucumber" },
+                  jacoco   : { sh "'${GRADLE_HOME}/bin/gradle' jacocoTestReport" },
+                  unit     : { sh "'${GRADLE_HOME}/bin/gradle' test" }
+                  )
+            }
+
+           catch (e) {
+              notifySlack('FAILED', "```stage: ${stage}```")
+              throw e
+            }
+          }
 
     stage('Triggering job and fetching artefact after finishing') {
 
@@ -91,7 +93,7 @@ node () {
            }
       }
 
-      stage('Asking for manual approva') {
+      stage('Asking for manual approval') {
 
            try {
               input 'Are you sure?'
@@ -103,17 +105,17 @@ node () {
            }
       }
 
-      // stage('Deployment') {
-      //
-      //      try {
-      //
-      //      }
-      //
-      //      catch (e) {
-      //         notifySlack('FAILED', "```stage: ${stage}```")
-      //         throw e
-      //      }
-      // }
+      stage('Deployment') {
+
+           try {
+             sh 'java -jar build/libs/gradle-simple.jar'
+           }
+
+           catch (e) {
+              notifySlack('FAILED', "```stage: ${stage}```")
+              throw e
+           }
+      }
       //
       // stage('Sending status') {
       //

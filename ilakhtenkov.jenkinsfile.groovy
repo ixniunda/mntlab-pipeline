@@ -1,7 +1,3 @@
-
-
-
-
 node {
     def repositoryUrl = "https://github.com/MNT-Lab/mntlab-pipeline.git"
     def branch = "ilakhtenkov"
@@ -14,6 +10,7 @@ node {
         }
         catch (Exception error){
             println ("PREPARATION Failed")
+            postToSlack ("${env.BUILD_TAG} PREPARATION Failed", "#general", "bot.ilakhtenkov")
             throw error
         }
     }
@@ -23,6 +20,7 @@ node {
         }
         catch (Exception error){
             println("BUILD Failed")
+            postToSlack ("${env.BUILD_TAG} BUILD Failed", "#general", "bot.ilakhtenkov")
             throw error
         }
     }
@@ -38,6 +36,7 @@ node {
         }
         catch (Exception error){
             println("TEST Failed")
+            postToSlack ("${env.BUILD_TAG} TEST Failed", "#general", "bot.ilakhtenkov")
             throw error
         }
     }
@@ -48,6 +47,7 @@ node {
         }
         catch (Exception error){
             println("TRIGGER-CHILD Failed")
+            postToSlack ("${env.BUILD_TAG} TRIGGER-CHILD Failed", "#general", "bot.ilakhtenkov")
             throw error
         }
     }
@@ -61,6 +61,7 @@ node {
         }
         catch (Exception error){
             println("PUBLISHING-RESULTS Failed")
+            postToSlack ("${env.BUILD_TAG} PUBLISHING-RESULTS Failed", "#general", "bot.ilakhtenkov")
             throw error
         }
     }
@@ -70,6 +71,7 @@ node {
         }
         catch (Exception error){
             println("APPROVAL Failed")
+            postToSlack ("${env.BUILD_TAG} APPROVAL Failed", "#general", "bot.ilakhtenkov")
             throw error
         }
     }
@@ -79,48 +81,17 @@ node {
             }
         catch (Exception error){
             println("DEPLOYING Failed")
+            postToSlack ("${env.BUILD_TAG} DEPLOYING failed", "#general", "bot.ilakhtenkov")
             throw error
         }
     }
     stage('STATUS') {
         println "SUCCESS"
-        postToSlack ("SUCCESS", "#general", "bot.ilakhtenkov")
+        postToSlack ("${env.BUILD_TAG} Successfully deployed ", "#general", "bot.ilakhtenkov")
     }
 }
+
 def postToSlack (String message, String channel, String userName) {
     def webhookUrl = "https://hooks.slack.com/services/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"
     sh "curl -X POST --data-urlencode \'payload={\"channel\": \"${channel}\", \"username\": \"${userName}\", \"text\": \"${message}\", \"icon_emoji\": \":chicken:\"}\' \"${webhookUrl}\""
 }
-
-
-/*def postToSlack(String url, String postContent) {
-    def connection = url.toURL().openConnection()
-    connection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded")
-    connection.setRequestMethod("POST")
-    connection.doOutput = true
-    connection.outputStream.withWriter{
-        it.write(postContent)
-        it.flush()
-    }
-    connection.connect()
-
-    try {
-        connection.content.text
-    } catch (IOException e) {
-        try {
-            ((HttpURLConnection)connection).errorStream.text
-        } catch (Exception ignored) {
-            throw e
-        }
-    }
-}*/
-
-
-/*def build (){
-    def buildInfo
-    def rtGradle = Artifactory.newGradleBuild()
-    rtGradle.tool = "gradle3.3"
-    rtGradle.deployer repo:'ext-release-local', server: server
-    rtGradle.resolver repo:'remote-repos', server: server
-    buildInfo = rtGradle.run rootDir: "/", buildFile: 'build.gradle', tasks: 'clean build'
-}*/

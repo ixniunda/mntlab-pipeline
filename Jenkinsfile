@@ -29,7 +29,7 @@ node ('EPBYMINW3093') {
     stage ('child1 JOB') {
         try {
         build job: 'MNTLAB-kshchura-child1-build-job', parameters: [string(name: 'BRANCH', value: 'kshchura')]
-        sh "cp ../MNTLAB-kshchura-child1-build-job/kshchura_dsl_script.tar.gz ."
+        sh "cp /var/server/jenkins/slave/workspace/EPBYMINW3093/MNTLAB-kshchura-child1-build-job/kshchura_dsl_script.tar.gz ."
 
         } catch (err) {
             println "FAILURE on child1 JOB1 stage"
@@ -38,8 +38,7 @@ node ('EPBYMINW3093') {
     }
     stage ('Packaging and Publishing') {
         try {
-	pwd ()
-        sh ("cp ../MNTLAB-kshchura-child1-build-job/dsl_main.groovy .")
+        sh ("cp /var/server/jenkins/slave/workspace/EPBYMINW3093/MNTLAB-kshchura-child1-build-job/dsl_main.groovy .")
 
         sh ("cp build/libs/gradle-simple.jar .")
         sh ("tar -czvf pipeline-kshchura-${BUILD_NUMBER}.tar.gz dsl_main.groovy gradle-simple.jar Jenkinsfile")

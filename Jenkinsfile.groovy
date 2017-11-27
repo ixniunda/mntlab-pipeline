@@ -10,7 +10,7 @@ node {
             checkout scm: [$class: 'GitSCM', branches: [[name: "*/${branch_name}"]], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/mntlab-pipeline.git']]]
         }
         catch (Exception e){
-            slack_notification ("${BUILD_TAG} Failed Preparation (Checking out) stage", "#pipeline", "ivauchok")
+            slack_notification ("${BUILD_TAG} Failed <Preparation (Checking out)> stage", "#pipeline", "ivauchok")
             throw e
         }
     }
@@ -19,7 +19,7 @@ node {
             sh "${gradle_home}/bin/gradle clean build"
         }
         catch (Exception e){
-            slack_notification ("${BUILD_TAG} Failed Building code stage", "#pipeline", "ivauchok")
+            slack_notification ("${BUILD_TAG} Failed <Building code> stage", "#pipeline", "ivauchok")
             throw e
         }
     }
@@ -31,7 +31,7 @@ node {
                     'Unit Tests': {sh "${gradle_home}/bin/gradle test"})
         }
         catch (Exception e){
-            slack_notification ("${BUILD_TAG} Failed Testing code stage", "#pipeline", "ivauchok")
+            slack_notification ("${BUILD_TAG} Failed <Testing code> stage", "#pipeline", "ivauchok")
             throw e
         }
     }
@@ -41,7 +41,7 @@ node {
             copyArtifacts(projectName: "${folder_name}/MNTLAB-${branch_name}-child1-build-job", filter: '*dsl_script.tar.gz')
         }
         catch (Exception e){
-            slack_notification ("${BUILD_TAG} Failed Triggering job and fetching artefact after finishing stage", "#pipeline", "ivauchok")
+            slack_notification ("${BUILD_TAG} Failed <Triggering job and fetching artefact after finishing> stage", "#pipeline", "ivauchok")
             throw e
         }
     }
@@ -60,7 +60,7 @@ node {
             //sh "curl -v --user 'nexus-service-user:123456' --upload-file ${artifact_name} http://nexus/repository/project-releases/pipeline/pipeline-${branch_name}/${BUILD_NUMBER}/${artifact_name}"
         }
         catch (Exception e){
-            slack_notification ("${BUILD_TAG} Failed Packaging and Publishing results stage", "#pipeline", "ivauchok")
+            slack_notification ("${BUILD_TAG} Failed <Packaging and Publishing results> stage", "#pipeline", "ivauchok")
             throw e
         }
     }
@@ -69,7 +69,7 @@ node {
             input 'Do you want to deploy gradle-simple.jar?'
         }
         catch (Exception e){
-            slack_notification ("${BUILD_TAG} Failed Asking for manual approval stage", "#pipeline", "ivauchok")
+            slack_notification ("${BUILD_TAG} Failed <Asking for manual approval> stage", "#pipeline", "ivauchok")
             throw e
         }
     }
@@ -78,16 +78,16 @@ node {
             sh "java -jar gradle-simple.jar"
         }
         catch (Exception e){
-            slack_notification ("${BUILD_TAG} Failed Deployment stage", "#pipeline", "ivauchok")
+            slack_notification ("${BUILD_TAG} Failed <Deployment> stage", "#pipeline", "ivauchok")
             throw e
         }
     }
     stage('Sending status') {
-        slack_notification ("${BUILD_TAG} Success deploy!!!", "#pipeline", "ivauchok")
+        slack_notification ("${BUILD_TAG} Success deployment!!!", "#pipeline", "ivauchok")
     }
 }
 
-def slack_notification (String message, String channel, String userName) {
+def slack_notification (message, channel, username) {
     def slack_url = "https://hooks.slack.com/services/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"
-    sh "curl -X POST --data-urlencode \'payload={\"channel\": \"${channel}\", \"username\": \"${userName}\", \"text\": \"${message}\", \"icon_emoji\": \":chicken:\"}\' \"${slack_url}\""
+    sh "curl -X POST --data-urlencode \'payload={\"channel\": \"${channel}\", \"username\": \"${username}\", \"text\": \"${message}\", \"icon_emoji\": \":ghost:\"}\' \"${slack_url}\""
 }

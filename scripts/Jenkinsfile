@@ -106,3 +106,8 @@ stage('Packaging and Publishing results') {
             stage_result = success
         }
     }
+
+        if (stage_result == success) {
+        stage('Deploy') {
+            node {
+    stage_name='Deploy'

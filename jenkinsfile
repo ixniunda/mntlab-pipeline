@@ -1,3 +1,4 @@
+
 def brname = "ilahutka"
 def giturl = "https://github.com/MNT-Lab/mntlab-pipeline.git"
 def job = "_pipeline"
@@ -27,9 +28,8 @@ def jdkHome = tool "java8"
     }   
     stage('Packaging, publishing results') {
        sh "tar xzvf ${brname}_dsl_script.tar.gz jobs.groovy; cp build/libs/gradle-simple.jar gradle-simple.jar; tar czvf pipeline-${brname}-${BUILD_NUMBER}.tar.gz jobs.groovy jenkinsfile gradle-simple.jar"
-       sh "curl -v -u jenkins:jenkins --upload-file pipeline-${brname}-${BUILD_NUMBER}.tar.gz http://172.28.128.27:8081/repository/project-releases/Releases/pipeline/${BUILD_NUMBER}/pipeline-${brname}-${BUILD_NUMBER}.tar.gz"
+       sh "curl -v -u jenkins:jenkins --upload-file pipeline-${brname}-${BUILD_NUMBER}.tar.gz http://EPBYMINW6406:8081/repository/project-releases/Releases/pipeline/${BUILD_NUMBER}/pipeline-${brname}-${BUILD_NUMBER}.tar.gz"
        archiveArtifacts artifacts: "pipeline-${brname}-${BUILD_NUMBER}.tar.gz", onlyIfSuccessful: true
-       sh "traceroute 172.28.128.27"
     }
     stage('Asking for manual approval') {
        input message: 'Deploy the artifact?', ok: 'Yes'

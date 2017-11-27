@@ -102,6 +102,7 @@ node {
 }
 def postToSlack (String message, String channel, String userName) {
     def webhookUrl = "https://hooks.slack.com/services/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"
+    def GRADLE_HOME = tool name: 'gradle3.3', type: 'hudson.plugins.gradle.GradleInstallation'
     sh "echo $GRADLE_HOME"
     sh "curl -X POST --data-urlencode \\\"payload={\\\"channel\\\": \\\"${channel}\\\", \\\"username\\\": \\\"${userName}\\\", \\\"text\\\": \\\"${message}\\\", \\\"icon_emoji\\\": \\\":chicken:\\\"}\\\" \\\"${webhookUrl}\\\""
 }

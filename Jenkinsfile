@@ -20,7 +20,7 @@ node {
     }
     stage("Build") {
         try {
-            gradle build
+            sh "/opt/gradle/bin/gradle build"
         }
         catch (Exception error) {
             println("Can't build $confGit/$confBranch project.")
@@ -63,7 +63,7 @@ node {
     }
     stage("Approval") {
         try {
-            input message: "Do you approve deployment of artifact: gradle-simple.jar?", ok: "y"
+            input message: "Do you approve deployment of artifact: gradle-simple.jar?", ok: "Yes"
         }
         catch (Exception error) {
             println("Approval failed.")

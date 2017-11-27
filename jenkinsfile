@@ -1,4 +1,3 @@
-
 def brname = "ilahutka"
 def giturl = "https://github.com/MNT-Lab/mntlab-pipeline.git"
 def job = "_pipeline"
@@ -8,34 +7,68 @@ node ("EPBYMINW6406"){
    
 def grdlHome = tool "gradle3.3"
 def jdkHome = tool "java8" 
-   
-   stage('Preparation - Checking out') { 
+   stage('Preparation - Checking out') {
+   try {
       checkout([$class: 'GitSCM', branches: [[name: "*/${brname}"]], userRemoteConfigs: [[url: "${giturl}"]]])
+   } catch (err) {
+        echo "Preparation stage failed"
+        currentBuild.result = 'FAILURE'
+   }
    }
    stage('Building code') { 
+   try {
       sh "${grdlHome}/bin/gradle clean build"
-   } 
+   } catch (err) {
+        echo "Building stage failed"
+        currentBuild.result = 'FAILURE'
+   }
+   }
     stage('Testing code') {
+    try {
        parallel (
        cucumber: { sh "${grdlHome}/bin/gradle cucumber" },
        jacoco: { sh "${grdlHome}/bin/gradle jacocoTestReport" },
        test: { sh "${grdlHome}/bin/gradle test" }
        )
+    } catch (err) {
+        echo "Testing stage failed"
+        currentBuild.result = 'FAILURE'
+    }
     }
     stage('Triggering job, fetching artefact') {
+    try {
        build job: "EPBYMINW6406/${tjob}", parameters: [string(name: 'BRANCH_NAME', value: "${brname}")], propagate: true, wait: true
        copyArtifacts(projectName: "EPBYMINW6406/${tjob}", filter: "${brname}_dsl_script.tar.gz")
-    }   
+    } catch (err) {
+        echo "Triggering stage failed"
+        currentBuild.result = 'FAILURE'
+    }  
+    }
     stage('Packaging, publishing results') {
+    try {
        sh "tar xzvf ${brname}_dsl_script.tar.gz jobs.groovy; cp build/libs/gradle-simple.jar gradle-simple.jar; tar czvf pipeline-${brname}-${BUILD_NUMBER}.tar.gz jobs.groovy jenkinsfile gradle-simple.jar"
        sh "curl -v -u jenkins:jenkins --upload-file pipeline-${brname}-${BUILD_NUMBER}.tar.gz http://EPBYMINW6406:8081/repository/project-releases/Releases/pipeline/${BUILD_NUMBER}/pipeline-${brname}-${BUILD_NUMBER}.tar.gz"
        archiveArtifacts artifacts: "pipeline-${brname}-${BUILD_NUMBER}.tar.gz", onlyIfSuccessful: true
+    } catch (err) {
+        echo "Packaging stage failed"
+        currentBuild.result = 'FAILURE'
+    }
     }
     stage('Asking for manual approval') {
+    try {
        input message: 'Deploy the artifact?', ok: 'Yes'
+    } catch (err) {
+        echo "Approving stage failed"
+        currentBuild.result = 'FAILURE'
+    }
     }
     stage('Deployment') {
+    try {
        sh "${jdkHome}/bin/java -jar gradle-simple.jar"
+    } catch (err) {
+        echo "Deployment stage failed"
+        currentBuild.result = 'FAILURE'
+    }
     }
     stage('Sending status') {
        println "SUCCESS"

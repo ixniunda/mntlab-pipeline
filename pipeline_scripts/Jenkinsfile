@@ -4,7 +4,7 @@ def student='mbialitski'
 def trigged_job='MNTLAB-MBialitski-slave1-build-job'
 def artifact_name="${student}_dsl_script.tar.gz"
 def folder="EPBYMINW2629"
-def path_to_file="workspace/$trigged_job"
+def path_to_file="workspace/$folder/$trigged_job"
 def path_to_jar="build/libs/gradle-simple.jar"
 def path_to_jenkinsfile="pipeline_scripts/Jenkinsfile"
 
@@ -71,7 +71,6 @@ if (currentBuild.currentResult == 'SUCCESS') {
         }
     }
 }
-
 
 stage('Triggering seed job'){
     node{

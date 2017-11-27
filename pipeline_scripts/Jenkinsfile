@@ -23,7 +23,7 @@ def send_mail (send_message){
 def handle_exception (error) {
 	stage_result=fail
 	message="Stage name:"+stage_name+".Error:"+error.message
-        send_mail(message)
+     //   send_mail(message)
 	send_to_slack(message)	
 }
 
@@ -47,8 +47,8 @@ stage('Building code') {
     node{
 	stage_name='Building code'
         try {
-            parallel ex_build: {sh 'gradle build'},
-                    ex_jar: {sh 'gradle jar'}
+            parallel ex_build: {sh "$GRADLE_TOOL build"},
+                    ex_jar: {sh "GRADLE_TOOL jar"}
         }catch (Exception ERROR){            
             handle_exception(ERROR)            
         }
@@ -61,9 +61,9 @@ if (currentBuild.currentResult == 'SUCCESS') {
         node{
             echo 'Testing stage'
 	    try{	
-            parallel stream1: {sh 'gradle cucumber'},
-                    stream2: {sh 'gradle jacocoTestReport'},
-                    stream3: {sh 'gradle test'}
+            parallel stream1: {sh "$GRADLE_TOOL cucumber"},
+                    stream2: {sh "$GRADLE_TOOL jacocoTestReport"},
+                    stream3: {sh "$GRADLE_TOOL test"}
 	    }catch(Exception ERROR){
 		handle_exception(ERROR)
 	    }

@@ -101,7 +101,7 @@ node {
     stage('STATUS') {
         println "SUCCESS"
         def message = "SUCCESS"
-        sh "curl -X POST --data-urlencode 'payload={\\\"channel\\\": \\\"${channel}\\\", \\\"username\\\": \\\"${userName}\\\", \\\"text\\\": \\\"${message}\\\", \\\"icon_emoji\\\": \\\":chicken:\\\"}' '${webhookUrl}'"
+        sh "curl -X POST --data-urlencode 'payload={"channel": "${channel}", "username": "${userName}", "text": "${message}", "icon_emoji": ":chicken:"}' '${webhookUrl}'"
     }
 }
 

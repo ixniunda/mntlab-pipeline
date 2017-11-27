@@ -20,8 +20,7 @@ node ("EPBYMINW3088") {
     }
     stage("Build") {
         try {
-            sh "find / -name 'gradle'"
-            sh "/opt/gradle/bin/gradle build"
+            sh "/var/server/jenkins/slave/tools/hudson.plugins.gradle.GradleInstallation/gradle3.3/bin/gradle build"
         }
         catch (Exception error) {
             println("Can't build $confGit/$confBranch project.")
@@ -30,9 +29,9 @@ node ("EPBYMINW3088") {
     }
     stage("Test") {
         try {
-            parallel a: { sh "/opt/gradle/bin/gradle test" },
-                b: { sh "/opt/gradle/bin/gradle jacocoTestReport" },
-                c: { sh "/opt/gradle/bin/gradle cucumber" }
+            parallel a: { sh "/var/server/jenkins/slave/tools/hudson.plugins.gradle.GradleInstallation/gradle3.3/bin/gradle test" },
+                b: { sh "/var/server/jenkins/slave/tools/hudson.plugins.gradle.GradleInstallation/gradle3.3/bin/gradle jacocoTestReport" },
+                c: { sh "/var/server/jenkins/slave/tools/hudson.plugins.gradle.GradleInstallation/gradle3.3/bin/gradle cucumber" }
         }
         catch (Exception error) {
             println("Tests failed.")

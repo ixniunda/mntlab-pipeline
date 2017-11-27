@@ -5,9 +5,6 @@
 node {
     def repositoryUrl = "https://github.com/MNT-Lab/mntlab-pipeline.git"
     def branch = "ilakhtenkov"
-    def userName = "bot.ilakhtenkov"
-    def channel = "#general"
-    def webhookUrl = "https://hooks.slack.com/services/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"
 
     stage('PREPARATION') {
         try {
@@ -100,14 +97,13 @@ node {
     }
     stage('STATUS') {
         println "SUCCESS"
-        def message = "SUCCESS"
-        sh "curl -X POST --data-urlencode 'payload={"channel": "${channel}", "username": "${userName}", "text": "${message}", "icon_emoji": ":chicken:"}' '${webhookUrl}'"
+        postToSlack ("SUCCESS", "#general", "bot.ilakhtenkov")
     }
 }
-
-//    def message = ""
-//    sh "curl -X POST --data-urlencode \"payload={\"channel\": \"${channel}\", \"username\": \"${userName}\", \"text\": \"${message}\", \"icon_emoji\": \":chicken:\"}\" ${webhookUrl}"
-
+def postToSlack (String message, String channel, String userName) {
+    def webhookUrl = "https://hooks.slack.com/services/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"
+    sh 'curl -X POST --data-urlencode \"payload={\"channel\": \"${channel}\", \"username\": \"${userName}\", \"text\": \"${message}\", \"icon_emoji\": \":chicken:\"}\" \"${webhookUrl}\"'
+}
 
 
 /*def postToSlack(String url, String postContent) {

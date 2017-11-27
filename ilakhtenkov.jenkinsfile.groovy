@@ -1,4 +1,4 @@
-node ("EPBYMIN2033") {
+node ("EPBYMINW2033") {
     def repositoryUrl = "https://github.com/MNT-Lab/mntlab-pipeline.git"
     def branch = "ilakhtenkov"
     def GRADLE_HOME = tool name: 'gradle3.3', type: 'hudson.plugins.gradle.GradleInstallation'

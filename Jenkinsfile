@@ -1,5 +1,4 @@
-
-de {
+node {
     def gradleHome
     gradleHome = tool 'gradle3.3'
     env.PATH = "${gradleHome}/bin:${env.PATH}"
@@ -35,5 +34,8 @@ de {
        nexusArtifactUploader artifacts: [[artifactId: 'pipeline', classifier: '', file: "pipeline-${branchName}-${BUILD_NUMBER}.tar.gz", type: 'tar.gz']], credentialsId: '4fcc9128-744c-4ad0-8726-a7990142ac25', groupId: 'pipeline', nexusUrl: '172.28.128.3:8081/', nexusVersion: 'nexus3', protocol: 'http', repository: 'arifacts', version: '$BUILD_NUMBER'
        
        
+   }
+   stage ('Asking for manual approval'){
+       input 'Do you want to deploy gradle-simple.jar?'
    }
 }

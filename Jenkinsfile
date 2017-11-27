@@ -40,7 +40,7 @@ node('EPBYMINW2468') {
                         }
                     },
                     'Unit Tests': {
-                        node('EPBYMINW2468') {
+                        node('EPBYMINW2470') {
                             sh "gradle test"
                         }
                     }

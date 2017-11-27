@@ -1,4 +1,4 @@
-inode {
+node {
     notifyStarted()
 
     def gradle_home = tool 'gradle3.3'

@@ -8,7 +8,7 @@ confBranch = "amurzich"
 confJob = "EPBYMINW3088/MNTLAB-amurzich-child1-build-job"
 
 
-node {
+node ("EPBYMINW3088") {
     stage("Preparation") {
         try {
             git branch: confBranch, url: confGit
@@ -20,7 +20,7 @@ node {
     }
     stage("Build") {
         try {
-            sh "/opt/gradle/bin/gradle build"
+            sh "gradle build"
         }
         catch (Exception error) {
             println("Can't build $confGit/$confBranch project.")
@@ -29,9 +29,9 @@ node {
     }
     stage("Test") {
         try {
-            parallel a: { sh "/opt/gradle/bin/gradle test" },
-                b: { sh "/opt/gradle/bin/gradle jacocoTestReport" },
-                c: { sh "/opt/gradle/bin/gradle cucumber" }
+            parallel a: { sh "gradle test" },
+                b: { sh "gradle jacocoTestReport" },
+                c: { sh "gradle cucumber" }
         }
         catch (Exception error) {
             println("Tests failed.")

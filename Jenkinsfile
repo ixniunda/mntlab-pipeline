@@ -15,6 +15,7 @@ node {
         }
         catch (Exception error) {
             println("Can't get $confBranch branch from $confGit repository.")
+            throw error
         }
     }
     stage("Build") {
@@ -23,6 +24,7 @@ node {
         }
         catch (Exception error) {
             println("Can't build $confGit/$confBranch project.")
+            throw error
         }
     }
     stage("Test") {
@@ -33,6 +35,7 @@ node {
         }
         catch (Exception error) {
             println("Tests failed.")
+            throw error
         }
     }
     stage("ChildJob") {
@@ -44,16 +47,18 @@ node {
         }
         catch (Exception error) {
             println("Job $confJob failed.")
+            throw error
         }
     }
     stage("Publishing") {
         try {
             sh "tar -xvzf artifact-dsl-${BUILD_NUMBER}.tar.gz"
-            sh "tar -cvzf pipeline-${confBranch}-${BUILD_NUMBER}.tar.gz ./dsl.groovy ./Jenkinsfile ./build/libs/gradle-simple.jar"
+            sh "tar -czvf pipeline-${confBranch}-${BUILD_NUMBER}.tar.gz ./dsl.groovy ./Jenkinsfile ./build/libs/gradle-simple.jar"
             sh "curl -v -u jenkins:jenkins --upload-file ./pipeline-${confBranch}-${BUILD_NUMBER}.tar.gz http://epbyminw3088:8081/repository/maven-custom/"
         }
         catch (Exception error) {
             println("Publishing failed.")
+            throw error
         }
     }
     stage("Approval") {
@@ -62,6 +67,7 @@ node {
         }
         catch (Exception error) {
             println("Approval failed.")
+            throw error
         }
     }
     stage("Deployment") {
@@ -70,6 +76,7 @@ node {
         }
         catch (Exception error) {
             println("Can't deploy build/libs/gradle-simple.jar")
+            throw error
         }
         finally {
             sh 'echo "SUCCESS"'

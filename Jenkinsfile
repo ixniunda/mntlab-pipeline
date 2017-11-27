@@ -29,7 +29,6 @@ node ('EPBYMINW3093') {
     stage ('child1 JOB') {
         try {
         build job: 'MNTLAB-kshchura-child1-build-job', parameters: [string(name: 'BRANCH', value: 'kshchura')]
-        sh "cp /var/server/jenkins/slave/workspace/EPBYMINW3093/MNTLAB-kshchura-child1-build-job/kshchura_dsl_script.tar.gz ."
 	copyArtifacts filter: 'kshchura_dsl_script.tar.gz', fingerprintArtifacts: true, projectName: 'EPBYMINW3093/MNTLAB-kshchura-child1-build-job', target: '.'
 
         } catch (err) {

@@ -20,7 +20,7 @@ node {
         }
         catch (Exception error){
             println("BUILD Failed")
-            postToSlack ("${env.BUILD_TAG} BUILD Failed", "#general", "bot.ilakhtenkov")
+            postToSlack ("${env.BUILD_TAG} BUILD Failed. See details:${env.BUILD_URL}", "#general", "bot.ilakhtenkov")
             throw error
         }
     }

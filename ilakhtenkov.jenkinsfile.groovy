@@ -1,7 +1,13 @@
 
+
+
+
 node {
     def repositoryUrl = "https://github.com/MNT-Lab/mntlab-pipeline.git"
     def branch = "ilakhtenkov"
+    def userName = ""
+    def channel = ""
+    def webhookUrl = "https://hooks.slack.com/services/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"
 
     stage('PREPARATION') {
         try {
@@ -10,7 +16,8 @@ node {
         }
         catch (Exception error){
             def content = '{"text": "Test message", "channel": "#general", "link_names": 1, "username": "ilakhtenkov-jenkins", "icon_emoji": ":jenkins_ci:"}'
-            postToSlack ("BUILD Failed", "bot.ilakhtenkov", "#general")
+            def message = "BUILD Failed"
+            sh "curl -X POST --data-urlencode \"payload={\"channel\": \"${channel}\", \"username\": \"${userName}\", \"text\": \"${message}\", \"icon_emoji\": \":chicken:\"}\" ${webhookUrl}"
             throw error
         }
     }
@@ -20,7 +27,8 @@ node {
         }
         catch (Exception error){
             //println("BUILD Failed")
-            postToSlack ("BUILD Failed", "bot.ilakhtenkov", "#general")
+            def message = "BUILD Failed"
+            sh "curl -X POST --data-urlencode \"payload={\"channel\": \"${channel}\", \"username\": \"${userName}\", \"text\": \"${message}\", \"icon_emoji\": \":chicken:\"}\" ${webhookUrl}"
             throw error
         }
     }
@@ -36,7 +44,8 @@ node {
         }
         catch (Exception error){
             //println("TEST Failed")
-            //postToSlack ("TEST Failed", "bot.ilakhtenkov", "#general")
+            def message = "TEST Failed"
+            sh "curl -X POST --data-urlencode \"payload={\"channel\": \"${channel}\", \"username\": \"${userName}\", \"text\": \"${message}\", \"icon_emoji\": \":chicken:\"}\" ${webhookUrl}"
             throw error
         }
     }
@@ -47,7 +56,8 @@ node {
         }
         catch (Exception error){
             //println("TRIGGER-CHILD Failed")
-            postToSlack ("TRIGGER-CHILD Failed", "bot.ilakhtenkov", "#general")
+            def message = "TRIGGER-CHILD Failed"
+            sh "curl -X POST --data-urlencode \"payload={\"channel\": \"${channel}\", \"username\": \"${userName}\", \"text\": \"${message}\", \"icon_emoji\": \":chicken:\"}\" ${webhookUrl}"
             throw error
         }
     }
@@ -61,7 +71,8 @@ node {
         }
         catch (Exception error){
             //println("PUBLISHING-RESULTS Failed")
-            postToSlack ("PUBLISHING-RESULTS Failed", "bot.ilakhtenkov", "#general")
+            def message = "PUBLISHING-RESULTS Failed"
+            sh "curl -X POST --data-urlencode \"payload={\"channel\": \"${channel}\", \"username\": \"${userName}\", \"text\": \"${message}\", \"icon_emoji\": \":chicken:\"}\" ${webhookUrl}"
             throw error
         }
     }
@@ -71,7 +82,8 @@ node {
         }
         catch (Exception error){
             //println("APPROVAL Failed")
-            postToSlack ("APPROVAL Failed", "bot.ilakhtenkov", "#general")
+            def message = "APPROVAL Failed"
+            sh "curl -X POST --data-urlencode \"payload={\"channel\": \"${channel}\", \"username\": \"${userName}\", \"text\": \"${message}\", \"icon_emoji\": \":chicken:\"}\" ${webhookUrl}"
             throw error
         }
     }
@@ -81,20 +93,22 @@ node {
             }
         catch (Exception error){
             //println("DEPLOYING Failed")
-            postToSlack ("DEPLOYING Failed", "bot.ilakhtenkov", "#general")
+            def message = "DEPLOYING Failed"
+            sh "curl -X POST --data-urlencode \"payload={\"channel\": \"${channel}\", \"username\": \"${userName}\", \"text\": \"${message}\", \"icon_emoji\": \":chicken:\"}\" ${webhookUrl}"
             throw error
         }
     }
     stage('STATUS') {
         println "SUCCESS"
-        postToSlack ("SUCCESS", "bot.ilakhtenkov", "#general")
+        def message = "SUCCESS"
+        sh "curl -X POST --data-urlencode \"payload={\"channel\": \"${channel}\", \"username\": \"${userName}\", \"text\": \"${message}\", \"icon_emoji\": \":chicken:\"}\" ${webhookUrl}"
     }
 }
 
-def postToSlack (String message, String userName, String channel) {
-    def webhookUrl = "https://hooks.slack.com/services/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"
+
+    def message = ""
     sh "curl -X POST --data-urlencode \"payload={\"channel\": \"${channel}\", \"username\": \"${userName}\", \"text\": \"${message}\", \"icon_emoji\": \":chicken:\"}\" ${webhookUrl}"
-}
+
 
 
 /*def postToSlack(String url, String postContent) {

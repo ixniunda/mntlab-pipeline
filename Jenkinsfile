@@ -8,7 +8,7 @@ confBranch = "amurzich"
 confJob = "EPBYMINW3088/MNTLAB-amurzich-child1-build-job"
 
 
-node("EPBYMINW3088") {
+node {
     stage("Preparation") {
         try {
             git branch: confBranch, url: confGit

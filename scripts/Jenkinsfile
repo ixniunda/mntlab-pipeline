@@ -67,3 +67,18 @@ if (currentBuild.currentResult == 'SUCCESS') {
         }
     }
 }
+
+stage('Triggering seed job'){
+    node{
+  stage_name='Triggering seed job'
+        try{
+            job=build job: trigged_job, parameters: [string(name: 'BRANCH_NAME', value: student)], wait: true
+        }catch(Exception ERROR){
+      handle_exception(ERROR)
+        }finally{
+            ws(path_to_file) {
+                stash includes: artifactID , name: 'artifact'
+            }
+        }
+    }
+}

@@ -20,7 +20,7 @@ node ("EPBYMINW3088") {
     }
     stage("Build") {
         try {
-            sh "ls /opt"
+            sh "find / -name 'gradle'"
             sh "/opt/gradle/bin/gradle build"
         }
         catch (Exception error) {

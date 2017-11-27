@@ -1,7 +1,7 @@
 node ("EPBYMINW2033") {
     def repositoryUrl = "https://github.com/MNT-Lab/mntlab-pipeline.git"
     def branch = "ilakhtenkov"
-    def groupId = "com.epam.mntlab.pipeline"
+    def groupId = "com/epam/mntlab/pipeline"
     def artifactId = "gradle-simple"
     def version = "${env.BUILD_NUMBER}"
     def nexusServer = "http://10.6.205.59:8081"
@@ -61,12 +61,7 @@ node ("EPBYMINW2033") {
             sh "tar -xzf  ${branch}_dsl_script.tar.gz"
             sh "tar -czf  pipeline-${branch}-${version}.tar.gz ./dsl/dsl_script.groovy ./ilakhtenkov.jenkinsfile.groovy ./build/libs/gradle-simple.jar"
             archiveArtifacts "pipeline-${branch}-*.tar.gz"
-            /*def finder = groupId =~ /\w+/
-            def grouppath = []
-            for (i = 0; i < finder.size(); i++) {
-                grouppath += "${finder[i]}"
-            }*/
-            sh "curl -v --user 'jenkins:jenkins' --upload-file './pipeline-${branch}-${version}.tar.gz' '${nexusServer}/repository/${repository}/com/epam/mntlab/pipeline/${artifactId}-${version}/${version}/${artifactId}-${version}-${version}.tar.gz'"
+            sh "curl -v --user 'jenkins:jenkins' --upload-file './pipeline-${branch}-${version}.tar.gz' '${nexusServer}/repository/${repository}/${groupId}/${artifactId}-${version}/${version}/${artifactId}-${version}-${version}.tar.gz'"
             //sh "curl -v --user 'jenkins:jenkins' --upload-file './pipeline-${branch}-${env.BUILD_NUMBER}.tar.gz' 'http://nexus.local/repository/Artifact_storage/com/epam/mntlab/pipeline/gradle-simple-${env.BUILD_NUMBER}/${env.BUILD_NUMBER}/gradle-simple-${env.BUILD_NUMBER}-${env.BUILD_NUMBER}.tar.gz'"
         }
         catch (Exception error){

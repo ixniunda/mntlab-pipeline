@@ -37,3 +37,17 @@ stage('Preparation') {
         }
     }
 }
+
+if (stage_result == success){
+stage('Building code') {
+    node{
+  stage_name='Building code'
+        try {
+            parallel ex_build: {sh "$GRADLE_TOOL build"},
+                    ex_jar: {sh "GRADLE_TOOL jar"}
+        }catch (Exception ERROR){            
+            handle_exception(ERROR)            
+        }
+    }
+}
+}

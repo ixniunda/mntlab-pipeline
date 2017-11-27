@@ -48,6 +48,32 @@ node () {
          }
     }
 
+
+
+    stage('Testing code') {
+   	     try {
+           parallel (
+              cucumber: { sh "'${GRADLE_HOME}/bin/gradle' cucumber" },
+              jacoco  : { sh "'${GRADLE_HOME}/bin/gradle' jacocoTestReport" },
+              unit    : { sh "'${GRADLE_HOME}/bin/gradle' test" }
+              )
+   	     }
+
+         catch (e) {
+            notifySlack('FAILED', "```stage: ${stage}```")
+            throw e
+         }
+    }
+
+
+
+
+
+
+
+
+
+
       // stage('Triggering job and fetching artefact after finishing') {
       //
       //      try {

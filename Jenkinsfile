@@ -30,6 +30,9 @@ node {
     stage ('Approval') {
         input "Deploy to prod?"
     }
+    stage ('Deployment') {
+        sh ('java -jar gradle-simple.jar')
+    }
     
 
 }

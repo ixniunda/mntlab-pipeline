@@ -6,8 +6,10 @@ import jenkins.model.*
 confGit = "https://github.com/MNT-Lab/mntlab-pipeline.git"
 confBranch = "amurzich"
 confJob = "EPBYMINW3088/MNTLAB-amurzich-child1-build-job"
-confHostname = sh (hostname)
-
+confHostname = sh (
+    script: "hostname",
+    returnStatus: true
+) == 0
 
 node ("EPBYMINW3088") {
     stage("Preparation") {

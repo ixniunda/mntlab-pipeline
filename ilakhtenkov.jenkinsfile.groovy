@@ -87,7 +87,7 @@ node {
     }
     stage('STATUS') {
         println "SUCCESS"
-        postToSlack ("${env.BUILD_TAG} Successfully deployed ", "#general", "bot.ilakhtenkov")
+        postToSlack ("${env.BUILD_TAG} Successfully deployed. See details:${env.BUILD_URL} ", "#general", "bot.ilakhtenkov")
     }
 }
 

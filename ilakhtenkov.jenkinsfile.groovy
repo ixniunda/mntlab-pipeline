@@ -15,7 +15,7 @@ node ("EPBYMINW2033") {
         }
         catch (Exception error){
             println ("PREPARATION Failed")
-            postToSlack ("${env.BUILD_TAG} PREPARATION Failed")
+            postToSlack ("${env.BUILD_TAG} PREPARATION Failed. See details:${env.BUILD_URL}")
             throw error
         }
     }
@@ -41,7 +41,7 @@ node ("EPBYMINW2033") {
         }
         catch (Exception error){
             println("TEST Failed")
-            postToSlack ("${env.BUILD_TAG} TEST Failed")
+            postToSlack ("${env.BUILD_TAG} TEST Failed. See details:${env.BUILD_URL}")
             throw error
         }
     }
@@ -52,7 +52,7 @@ node ("EPBYMINW2033") {
         }
         catch (Exception error){
             println("TRIGGER-CHILD Failed")
-            postToSlack ("${env.BUILD_TAG} TRIGGER-CHILD Failed")
+            postToSlack ("${env.BUILD_TAG} TRIGGER-CHILD Failed. See details:${env.BUILD_URL}")
             throw error
         }
     }
@@ -71,7 +71,7 @@ node ("EPBYMINW2033") {
         }
         catch (Exception error){
             println("PUBLISHING-RESULTS Failed")
-            postToSlack ("${env.BUILD_TAG} PUBLISHING-RESULTS Failed")
+            postToSlack ("${env.BUILD_TAG} PUBLISHING-RESULTS Failed. See details:${env.BUILD_URL}")
             throw error
         }
     }
@@ -81,7 +81,7 @@ node ("EPBYMINW2033") {
         }
         catch (Exception error){
             println("APPROVAL Failed")
-            postToSlack ("${env.BUILD_TAG} APPROVAL Failed")
+            postToSlack ("${env.BUILD_TAG} APPROVAL Failed. See details:${env.BUILD_URL}")
             throw error
         }
     }
@@ -91,13 +91,13 @@ node ("EPBYMINW2033") {
             }
         catch (Exception error){
             println("DEPLOYING Failed")
-            postToSlack ("${env.BUILD_TAG} DEPLOYING failed")
+            postToSlack ("${env.BUILD_TAG} DEPLOYING failed. See details:${env.BUILD_URL}")
             throw error
         }
     }
     stage('STATUS') {
         println "SUCCESS"
-        postToSlack ("${env.BUILD_TAG} Successfully deployed. See details:${env.BUILD_URL} ")
+        postToSlack ("${env.BUILD_TAG} Successfully deployed. See details:${env.BUILD_URL}")
     }
 }
 

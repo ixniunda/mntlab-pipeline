@@ -116,17 +116,18 @@ node () {
               throw e
            }
       }
-      //
-      // stage('Sending status') {
-      //
-      //      try {
-      //
-      //      }
-      //
-      //      catch (e) {
-      //         notifySlack('FAILED', "```stage: ${stage}```")
-      //         throw e
-      //      }
-      // }
+
+      stage('Sending status') {
+
+           try {
+             currentBuild.result = 'SUCCESS'
+           }
+
+           catch (e) {
+              currentBuild.result = 'FAILURE'
+              notifySlack('FAILED', "```stage: ${stage}```")
+              throw e
+           }
+      }
 
 }

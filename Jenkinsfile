@@ -1,12 +1,13 @@
-def grdHomeme = tool 'gradle3.3'
+
+def grdHome = tool 'gradle3.3'
 def javaHome = tool 'java8'
 node('EPBYMINW6405'){
     try{
     stage('Checkout'){
-    checkout([$class: 'GitSCM', 
-    branches: [[name: 'ataran']], 
-    userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/mntlab-pipeline.git']]
-]) } 
+        checkout([$class: 'GitSCM', 
+        branches: [[name: 'ataran']], 
+        userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/mntlab-pipeline.git']]]) 
+    } 
     } catch(err){echo "Checkout fails.";currentBuild.result = 'FAILURE'}
     try{
     stage('Build'){
@@ -25,7 +26,7 @@ node('EPBYMINW6405'){
     } catch(err){echo "Tests fails.";currentBuild.result = 'FAILURE'}
     try{
     stage('Trigger Job'){
-        build job: 'MNTLAB-ataran-child1-build-job', parameters: [string(name: 'BRANCH_NAME', value: ''), string(name: 'BRANCH_NAME', value: 'ataran')],propagate: true, wait: true
+        build job: 'EPBYMINW6405/MNTLAB-ataran-child1-build-job', parameters: [string(name: 'BRANCH_NAME', value: ''), string(name: 'BRANCH_NAME', value: 'ataran')],propagate: true, wait: true
         sh "cp -f $JENKINS_HOME/workspace/MNTLAB-ataran-child1-build-job/ataran_dsl_script.tar.gz $JENKINS_HOME/workspace/pipeline_job/"
     }
     } catch(err){echo "Tests fails.";currentBuild.result = 'FAILURE'}
@@ -50,8 +51,7 @@ node('EPBYMINW6405'){
     }
     } catch(err){echo "Deploy fails.";currentBuild.result = 'FAILURE'}
     stage('Final'){
-        echo 'Sucess'
-
+        echo 'Success'
     }
     
 }

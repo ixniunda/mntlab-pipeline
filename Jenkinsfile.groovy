@@ -1,7 +1,7 @@
 node {
    // notifyStarted()
 
-    def gradle_home = tool 'gradle3.3'
+   // def gradle_home = tool 'gradle3.3'
     def branch_name = 'ivauchok'
     def folder_name = 'EPBYMINW2473'
     def artifact_name = "pipeline-${branch_name}-${BUILD_NUMBER}.tar.gz"
@@ -10,7 +10,7 @@ node {
         checkout scm: [$class: 'GitSCM', branches: [[name: "*/${branch_name}"]], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/mntlab-pipeline.git']]]
     }
     stage('Building code') {
-        sh "${gradle_home}/bin/gradle clean build"
+        sh "gradle clean build"
     }
     stage('Testing code') {
         parallel (

@@ -51,10 +51,10 @@ node {
             archiveArtifacts "${artifact_name}"
 
             //Test from remote Jenkins server to Nexus server on Alexandr_Taran machine:
-            //sh "curl -v --user 'admin:admin123' --upload-file ${artifact_name} http://epbyminw6405:8081/repository/maven-prod/pipeline/pipeline-${branch_name}/${BUILD_NUMBER}/${artifact_name}"
+            sh "curl -v --user 'admin:admin123' --upload-file ${artifact_name} http://epbyminw6405:8081/repository/maven-prod/pipeline/pipeline-${branch_name}/${BUILD_NUMBER}/${artifact_name}"
 
             //Test from remote Jenkins server to Nexus server on my laptop:
-            sh "curl -v --user 'nexus-service-user:123456' --upload-file ${artifact_name} http://10.6.154.84:8081/repository/project-releases/pipeline/pipeline-${branch_name}/${BUILD_NUMBER}/${artifact_name}"
+            //sh "curl -v --user 'nexus-service-user:123456' --upload-file ${artifact_name} http://10.6.154.84:8081/repository/project-releases/pipeline/pipeline-${branch_name}/${BUILD_NUMBER}/${artifact_name}"
 
             //Test from local Jenkins server to Nexus server on my laptop:
             //sh "curl -v --user 'nexus-service-user:123456' --upload-file ${artifact_name} http://nexus/repository/project-releases/pipeline/pipeline-${branch_name}/${BUILD_NUMBER}/${artifact_name}"

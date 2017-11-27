@@ -74,7 +74,9 @@ node('EPBYMINW2468') {
         ex.printStackTrace()
     }
     stage('Approval') {
-        input 'Are you sure want to Deploy ' + JAR + '?'
+	timeout(time:1, unit:'HOURS') {
+   	input message: 'Are you sure want to Deploy ' + JAR + '?'
+	}
     }
     try {
         stage('Deployment') {

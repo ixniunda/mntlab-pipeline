@@ -6,7 +6,7 @@ import jenkins.model.*
 confGit = "https://github.com/MNT-Lab/mntlab-pipeline.git"
 confBranch = "amurzich"
 confJob = "EPBYMINW3088/MNTLAB-amurzich-child1-build-job"
-confHostname = $env.HOSTNAME
+confHostname = env.HOSTNAME
 
 
 node ("EPBYMINW3088") {

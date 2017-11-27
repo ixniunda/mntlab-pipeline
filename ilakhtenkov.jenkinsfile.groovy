@@ -10,7 +10,7 @@ node {
         }
         catch (Exception error){
             def content = '{"text": "Test message", "channel": "#general", "link_names": 1, "username": "ilakhtenkov-jenkins", "icon_emoji": ":jenkins_ci:"}'
-            postToSlack (slackUrl, content)
+            postToSlack ("BUILD Failed", "bot.ilakhtenkov", "#general")
             throw error
         }
     }
@@ -19,7 +19,8 @@ node {
             sh "gradle clean build"
         }
         catch (Exception error){
-            println("BUILD Failed")
+            //println("BUILD Failed")
+            postToSlack ("BUILD Failed", "bot.ilakhtenkov", "#general")
             throw error
         }
     }
@@ -34,7 +35,8 @@ node {
             }
         }
         catch (Exception error){
-            println("TEST Failed")
+            //println("TEST Failed")
+            //postToSlack ("TEST Failed", "bot.ilakhtenkov", "#general")
             throw error
         }
     }
@@ -44,7 +46,8 @@ node {
             copyArtifacts(projectName: 'EPBYMINW2033/MNTLAB-ilakhtenkov-child1-build-job', filter: '*_dsl_script.tar.gz')
         }
         catch (Exception error){
-            println("TRIGGER-CHILD Failed")
+            //println("TRIGGER-CHILD Failed")
+            postToSlack ("TRIGGER-CHILD Failed", "bot.ilakhtenkov", "#general")
             throw error
         }
     }
@@ -57,7 +60,8 @@ node {
             sh "curl -v --user 'jenkins:jenkins' --upload-file './pipeline-${branch}-${env.BUILD_NUMBER}.tar.gz' 'http://nexus.local/repository/Artifact_storage/com/epam/mntlab/pipeline/gradle-simple-${env.BUILD_NUMBER}/${env.BUILD_NUMBER}/gradle-simple-${env.BUILD_NUMBER}-${env.BUILD_NUMBER}.tar.gz'"
         }
         catch (Exception error){
-            println("PUBLISHING-RESULTS Failed")
+            //println("PUBLISHING-RESULTS Failed")
+            postToSlack ("PUBLISHING-RESULTS Failed", "bot.ilakhtenkov", "#general")
             throw error
         }
     }
@@ -66,7 +70,8 @@ node {
             input message: 'Do you want to deploy?', ok: 'Yes'
         }
         catch (Exception error){
-            println("APPROVAL Failed")
+            //println("APPROVAL Failed")
+            postToSlack ("APPROVAL Failed", "bot.ilakhtenkov", "#general")
             throw error
         }
     }
@@ -75,16 +80,24 @@ node {
             sh "java -jar build/libs/gradle-simple.jar"
             }
         catch (Exception error){
-            println("DEPLOYING Failed")
+            //println("DEPLOYING Failed")
+            postToSlack ("DEPLOYING Failed", "bot.ilakhtenkov", "#general")
             throw error
         }
     }
     stage('STATUS') {
         sh "SUCCESS"
+        postToSlack ("SUCCESS", "bot.ilakhtenkov", "#general")
     }
 }
 
-def postToSlack(String url, String postContent) {
+def postToSlack (String message, String userName, String channel) {
+    def webhookUrl = "https://hooks.slack.com/services/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"
+    sh "curl -X POST --data-urlencode \"payload={\"channel\": \"${channel}\", \"username\": \"${userName}\", \"text\": \"${message}\", \"icon_emoji\": \":chicken:\"}\" ${webhookUrl}"
+}
+
+
+/*def postToSlack(String url, String postContent) {
     def connection = url.toURL().openConnection()
     connection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded")
     connection.setRequestMethod("POST")
@@ -104,14 +117,14 @@ def postToSlack(String url, String postContent) {
             throw e
         }
     }
-}
+}*/
 
 
-def build (){
+/*def build (){
     def buildInfo
     def rtGradle = Artifactory.newGradleBuild()
     rtGradle.tool = "gradle3.3"
     rtGradle.deployer repo:'ext-release-local', server: server
     rtGradle.resolver repo:'remote-repos', server: server
     buildInfo = rtGradle.run rootDir: "/", buildFile: 'build.gradle', tasks: 'clean build'
-}
+}*/

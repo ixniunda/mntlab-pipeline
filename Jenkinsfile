@@ -20,7 +20,7 @@ node ("EPBYMINW3088") {
     }
     stage("Build") {
         try {
-            sh "gradle build"
+            sh "/opt/gradle/bin/gradle build"
         }
         catch (Exception error) {
             println("Can't build $confGit/$confBranch project.")
@@ -29,9 +29,9 @@ node ("EPBYMINW3088") {
     }
     stage("Test") {
         try {
-            parallel a: { sh "gradle test" },
-                b: { sh "gradle jacocoTestReport" },
-                c: { sh "gradle cucumber" }
+            parallel a: { sh "/opt/gradle/bin/gradle test" },
+                b: { sh "/opt/gradle/bin/gradle jacocoTestReport" },
+                c: { sh "/opt/gradle/bin/gradle cucumber" }
         }
         catch (Exception error) {
             println("Tests failed.")

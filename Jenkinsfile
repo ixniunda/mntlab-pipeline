@@ -6,10 +6,6 @@ import jenkins.model.*
 confGit = "https://github.com/MNT-Lab/mntlab-pipeline.git"
 confBranch = "amurzich"
 confJob = "EPBYMINW3088/MNTLAB-amurzich-child1-build-job"
-confHostname = sh (
-    script: 'hostname',
-	returnStdout: true
-).trim()
 
 
 node ("EPBYMINW3088") {
@@ -58,7 +54,7 @@ node ("EPBYMINW3088") {
         try {
             sh "tar -xvzf artifact-dsl-${BUILD_NUMBER}.tar.gz"
             sh "tar -czvf pipeline-${confBranch}-${BUILD_NUMBER}.tar.gz ./dsl.groovy ./Jenkinsfile ./build/libs/gradle-simple.jar"
-            sh "curl -v -u jenkins:jenkins --upload-file ./pipeline-${confBranch}-${BUILD_NUMBER}.tar.gz http://epbyminw3088:8081/repository/maven-custom/com/mnt/pipeline/pipeline-${confBranch}-${BUILD_NUMBER}-${confHostname}.tar.gz"
+            sh "curl -v -u jenkins:jenkins --upload-file ./pipeline-${confBranch}-${BUILD_NUMBER}.tar.gz http://epbyminw3088:8081/repository/maven-custom/com/mnt/pipeline/pipeline-${confBranch}-${BUILD_NUMBER}-${NODE-NAME}.tar.gz"
         }
         catch (Exception error) {
             println("Publishing failed.")

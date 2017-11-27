@@ -27,9 +27,9 @@ node {
     }
     stage("Test") {
         try {
-            parallel a: { bash "gradle test" },
-                b: { bash "gradle jacocoTestReport" },
-                c: { bash "gradle cucumber" }
+            parallel a: { sh "gradle test" },
+                b: { sh "gradle jacocoTestReport" },
+                c: { sh "gradle cucumber" }
         }
         catch (Exception error) {
             println("Tests failed.")
@@ -48,9 +48,9 @@ node {
     }
     stage("Publishing") {
         try {
-            bash "tar -xvzf artifact-dsl-${BUILD_NUMBER}.tar.gz"
-            bash "tar -cvzf pipeline-${confBranch}-${BUILD_NUMBER}.tar.gz ./dsl.groovy ./Jenkinsfile ./build/libs/gradle-simple.jar"
-            bash "curl -v -u jenkins:jenkins --upload-file ./pipeline-${confBranch}-${BUILD_NUMBER}.tar.gz http://epbyminw3088:8081/repository/maven-custom/"
+            sh "tar -xvzf artifact-dsl-${BUILD_NUMBER}.tar.gz"
+            sh "tar -cvzf pipeline-${confBranch}-${BUILD_NUMBER}.tar.gz ./dsl.groovy ./Jenkinsfile ./build/libs/gradle-simple.jar"
+            sh "curl -v -u jenkins:jenkins --upload-file ./pipeline-${confBranch}-${BUILD_NUMBER}.tar.gz http://epbyminw3088:8081/repository/maven-custom/"
         }
         catch (Exception error) {
             println("Publishing failed.")
@@ -66,13 +66,13 @@ node {
     }
     stage("Deployment") {
         try {
-            bash "java -jar build/libs/gradle-simple.jar"
+            sh "java -jar build/libs/gradle-simple.jar"
         }
         catch (Exception error) {
             println("Can't deploy build/libs/gradle-simple.jar")
         }
         finally {
-            bash 'echo "SUCCESS"'
+            sh 'echo "SUCCESS"'
         }
     }
 }

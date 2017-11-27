@@ -29,9 +29,9 @@ def handle_exception (error) {
      //   send_mail(message)
 	send_to_slack(message)	
 }
-
+node('EPBYMINW2629') {
 stage('Preparation') {
-    node {
+    
         
         stage_name='Preparation'
         cleanWs()
@@ -42,12 +42,12 @@ stage('Preparation') {
             handle_exception(ERROR)
             throw ERROR
         }
-    }
+    
 }
 
 if (stage_result == success){
 stage('Building code') {
-    node{
+    
         def gradle_home = tool name: 'gradle3.3', type: 'hudson.plugins.gradle.GradleInstallation' 
 	stage_name='Building code'
         try {
@@ -56,13 +56,13 @@ stage('Building code') {
         }catch (Exception ERROR){            
             handle_exception(ERROR)            
         }
-    }
+    
 }
 }
 
 if (currentBuild.currentResult == 'SUCCESS') {
     stage('Testing code'){
-        node{
+       
 	    def gradle_home = tool name: 'gradle3.3', type: 'hudson.plugins.gradle.GradleInstallation' 
             echo 'Testing stage'
 	    try{	
@@ -73,12 +73,12 @@ if (currentBuild.currentResult == 'SUCCESS') {
 		handle_exception(ERROR)
 	    }
 
-        }
+        
     }
 }
 
 stage('Triggering seed job'){
-    node{
+    
 	stage_name='Triggering seed job'
         try{
             job=build job: trigged_job, parameters: [string(name: 'BRANCH_NAME', value: student )], wait: true
@@ -96,12 +96,12 @@ stage('Triggering seed job'){
 			target: './',                       
                 ])
          //   }
-        }
+        
     }
 }
 
 stage('Packaging and Publishing results') {
-    node {
+    
 	stage_name='Packaging and Publishing results'
         		
 	
@@ -130,7 +130,7 @@ stage('Packaging and Publishing results') {
 
     if (stage_result == success) {
         stage('Deploy') {
-            node {
+            
 		stage_name='Deploy'	
                 input "Deploy ...?"
                 try {
@@ -140,7 +140,7 @@ stage('Packaging and Publishing results') {
                 }
                 finally {
                     send_to_slack("SUCCESS.Build done")
-                }
+                
             }
         }
     }

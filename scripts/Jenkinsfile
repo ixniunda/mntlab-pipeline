@@ -22,3 +22,18 @@ def send_to_slack (slack_message){
     sh 'curl -X POST -H \'Content-type: application/json\' --data \'{\"text\":\"${slack_message}\"}\' https://hooks.slack.com/services/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'
 }
 
+// make some magic
+stage('Preparation') {
+
+    stage_name='Preparation'
+    node {
+        cleanWs()
+        try {
+            checkout([$class: 'GitSCM', branches: [[name: "*/$student"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/mntlab-pipeline.git']]])
+
+        }catch(Exception ERROR){           
+            handle_exception(ERROR)
+            throw ERROR
+        }
+    }
+}

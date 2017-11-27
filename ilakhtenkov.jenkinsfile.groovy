@@ -60,13 +60,13 @@ node ("EPBYMINW2033") {
         try {
             sh "tar -xzf  ${branch}_dsl_script.tar.gz"
             sh "tar -czf  pipeline-${branch}-${version}.tar.gz ./dsl/dsl_script.groovy ./ilakhtenkov.jenkinsfile.groovy ./build/libs/gradle-simple.jar"
-            archiveArtifacts 'pipeline-ilakhtenkov-*.tar.gz'
-            def finder = groupId =~ /\w+/
+            archiveArtifacts "pipeline-${branch}-*.tar.gz"
+            /*def finder = groupId =~ /\w+/
             def grouppath = []
             for (i = 0; i < finder.size(); i++) {
                 grouppath += "${finder[i]}"
-            }
-            sh "curl -v --user 'jenkins:jenkins' --upload-file './pipeline-${branch}-${env.BUILD_NUMBER}.tar.gz' '${nexusServer}/repository/${repository}/${grouppath.join('/')}/${artifactId}-${version}/${version}/${artifactId}-${version}-${version}.tar.gz'"
+            }*/
+            sh "curl -v --user 'jenkins:jenkins' --upload-file './pipeline-${branch}-${version}.tar.gz' '${nexusServer}/repository/${repository}/com/epam/mntlab/pipeline/${artifactId}-${version}/${version}/${artifactId}-${version}-${version}.tar.gz'"
             //sh "curl -v --user 'jenkins:jenkins' --upload-file './pipeline-${branch}-${env.BUILD_NUMBER}.tar.gz' 'http://nexus.local/repository/Artifact_storage/com/epam/mntlab/pipeline/gradle-simple-${env.BUILD_NUMBER}/${env.BUILD_NUMBER}/gradle-simple-${env.BUILD_NUMBER}-${env.BUILD_NUMBER}.tar.gz'"
         }
         catch (Exception error){

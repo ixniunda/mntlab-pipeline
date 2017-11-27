@@ -1,72 +1,125 @@
+def notifySlack(status, extra = "") {
+    def header = "*${status}*: Job *${env.JOB_NAME}* [${env.BUILD_NUMBER}]\n  *job*: ${env.BUILD_URL}"
+    def colors = [
+        'STARTED': 'warning',
+        'FAILED': 'danger',
+        'SUCCESSFUL': 'good'
+    ]
+    slackSend(
+        teamDomain: 'slack-team-domain',
+        channel: '#slack-channel',
+        tokenCredentialId: 'slackawsheroes',
+        color: colors[status],
+        message: "${header}\n${extra}"
+    )
+}
+
 node ('EPBYMINW2472') {
 
     environment {
-        DISABLE_AUTH = 'true'
-        DB_ENGINE    = 'sqlite'
-    }
-    
-    stages {
-        stage('Preparation') {
-            steps {
-                sh 'printenv'
-            }
-        }
-    }
-    
-    stages {
-        stage('Building code') {
-            steps {
-                sh 'printenv'
-            }
-        }
+      env.JAVA_HOME="${tool 'jdk-8u45'}"
+      env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
     }
 
-    stages {
-        stage('Testing code') {
-            steps {
-                sh 'printenv'
-            }
-        }
-    }
 
-    stages {
-        stage('Triggering job and fetching artefact after finishing') {
-            steps {
-                sh 'printenv'
-            }
-        }
-    }
+ 	notifySlack('STARTED', "  *commit*: https://github.com/ORG/REPO/commit/${commitIDl}\n```${commitMsg}```")
 
-    stages {
-        stage('Packaging and Publishing results') {
-            steps {
-                sh 'printenv'
-            }
-        }
-    }
+     	stage('Preparation') {
 
-    stages {
-        stage('Asking for manual approval') {
-            steps {
-                sh 'printenv'
-            }
-        }
-    }
+           try {
+   			            checkout  changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: '*/adudko']],
+  		                        doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [],
+  		                        userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/mntlab-pipeline.git']]]
+           }
 
-    stages {
-        stage('Deployment') {
-            steps {
-                sh 'printenv'
-            }
-        }
-    }
+	         catch (e) {
+ 	            notifySlack('FAILED', "```stage: ${stage}```")
+              throw e
+	         }
+      }
 
-    stages {
-        stage('Sending status') {
-            steps {
-                sh 'printenv'
-            }
-        }
-    }
+      stage('Building code') {
+
+           try {
+
+           }
+
+	         catch (e) {
+ 	            notifySlack('FAILED', "```stage: ${stage}```")
+              throw e
+	         }
+      }
+
+      stage('Testing code') {
+
+           try {
+
+           }
+
+           catch (e) {
+              notifySlack('FAILED', "```stage: ${stage}```")
+              throw e
+           }
+      }
+
+      stage('Triggering job and fetching artefact after finishing') {
+
+           try {
+
+           }
+
+           catch (e) {
+              notifySlack('FAILED', "```stage: ${stage}```")
+              throw e
+           }
+      }
+
+      stage('Packaging and Publishing results') {
+
+           try {
+
+           }
+
+           catch (e) {
+              notifySlack('FAILED', "```stage: ${stage}```")
+              throw e
+           }
+      }
+
+      stage('Asking for manual approva') {
+
+           try {
+
+           }
+
+           catch (e) {
+              notifySlack('FAILED', "```stage: ${stage}```")
+              throw e
+           }
+      }
+
+      stage('Deployment') {
+
+           try {
+
+           }
+
+           catch (e) {
+              notifySlack('FAILED', "```stage: ${stage}```")
+              throw e
+           }
+      }
+
+      stage('Sending status') {
+
+           try {
+
+           }
+
+           catch (e) {
+              notifySlack('FAILED', "```stage: ${stage}```")
+              throw e
+           }
+      }
 
 }

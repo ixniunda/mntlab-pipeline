@@ -6,12 +6,9 @@ node {
     def BRANCH_NAME = 'abandarovich'
     def JAR = "build/libs/gradle-simple.jar"
     stage('Git checkout') {
-        echo "Stage 1"
         git branch: 'abandarovich', url: 'https://github.com/MNT-Lab/mntlab-pipeline.git'
-
     }
     stage('Build') {
-
         sh "gradle build"
     }
     stage('Test') {
@@ -33,7 +30,8 @@ node {
     stage('Package') {
         copyArtifacts(projectName: "MNTLAB-abandarovich-child1-build-job", filter: '*dsl_script.tar.gz')
         archiveArtifacts 'Jenkinsfile,'+JAR+',*dsl_script.tar.gz'
-
+        sh "tar -cvzf pipeline-abandarovich-${BUILD_NUMBER}.tar.gz Jenkinsfile *dsl_script.tar.gz"
+        sh "curl -v --user 'admin:12345678' --upload-file ./pipeline-abandarovich-${BUILD_NUMBER}.tar.gz http://nexus/repository/task11/com.github.jitpack/gradle-simple/1.0/pipeline-abandarovich-${BUILD_NUMBER}.tar.gz"
     }
     stage('Approval') {
      //   input 'Are you sure?'

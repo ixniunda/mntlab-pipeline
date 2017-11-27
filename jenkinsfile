@@ -5,17 +5,20 @@ def tjob = "MNTLAB-ilahutka-child1-build-job"
 
 node {
    
+def grdlHome = tool "gradle3.3"
+def jdkHome = tool "java8" 
+   
    stage('Preparation - Checking out') { 
       checkout([$class: 'GitSCM', branches: [[name: "*/${brname}"]], userRemoteConfigs: [[url: "${giturl}"]]])
    }
    stage('Building code') { 
-      sh "/opt/gradle-3.5/bin/gradle clean build"
+      sh "${grdlHome}/bin/gradle clean build"
    } 
     stage('Testing code') {
        parallel (
-       cucumber: { sh "/opt/gradle-3.5/bin/gradle cucumber" },
-       jacoco: { sh "/opt/gradle-3.5/bin/gradle jacocoTestReport" },
-       test: { sh "/opt/gradle-3.5/bin/gradle test" }
+       cucumber: { sh "${grdlHome}/bin/gradle cucumber" },
+       jacoco: { sh "${grdlHome}/bin/gradle jacocoTestReport" },
+       test: { sh "${grdlHome}/bin/gradle test" }
        )
     }
     stage('Triggering job, fetching artefact') {
@@ -28,10 +31,10 @@ node {
        archiveArtifacts artifacts: "pipeline-${brname}-${BUILD_NUMBER}.tar.gz", onlyIfSuccessful: true
     }
     stage('Asking for manual approval') {
-       input message: 'Deploy the artifact?', ok: 'yes'
+       input message: 'Deploy the artifact?', ok: 'Yes'
     }
     stage('Deployment') {
-       sh "java -jar gradle-simple.jar"
+       sh "${jdkHome}/bin/java -jar gradle-simple.jar"
     }
     
 }

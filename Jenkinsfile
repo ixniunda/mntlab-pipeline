@@ -55,8 +55,8 @@ node('EPBYMINW2468') {
             build job: CHILD_JOB, parameters: [
                     [$class: 'StringParameterValue', name: 'BRANCH_NAME', value: 'abandarovich']
             ], wait: true
-	    sleep 3s	
-	    copyArtifacts(projectName: CHILD_JOB, filter: CHILD_ARTIFACT)
+	  //  copyArtifacts(projectName: CHILD_JOB, filter: CHILD_ARTIFACT)
+	    copyArtifacts(projectName: CHILD_JOB)
         }
     }
     catch (Exception ex) {

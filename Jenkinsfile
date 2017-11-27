@@ -1,6 +1,6 @@
 #!groovy
 
-node ('EPBYMINW2468'){
+node('EPBYMINW2468') {
     def gradle = tool "gradle3.3"
     env.PATH = "${gradle}/bin:${env.PATH}"
     def BRANCH_NAME = 'abandarovich'
@@ -30,13 +30,19 @@ node ('EPBYMINW2468'){
     try {
         stage('Test') {
             parallel 'Cucumber Tests': {
-                sh "gradle cucumber"
+                node('EPBYMINW2466') {
+                    sh "gradle cucumber"
+                }
             },
                     'Jacoco Tests': {
-                        sh "gradle jacocoTestReport"
+                        node('EPBYMINW2467') {
+                            sh "gradle jacocoTestReport"
+                        }
                     },
                     'Unit Tests': {
-                        sh "gradle test"
+                        node('EPBYMINW2468') {
+                            sh "gradle test"
+                        }
                     }
         }
     }

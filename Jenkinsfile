@@ -27,9 +27,9 @@ node {
     }
     stage("Test") {
         try {
-            parallel a: { sh "gradle test" },
-                b: { sh "gradle jacocoTestReport" },
-                c: { sh "gradle cucumber" }
+            parallel a: { sh "/opt/gradle/bin/gradle test" },
+                b: { sh "/opt/gradle/bin/gradle jacocoTestReport" },
+                c: { sh "/opt/gradle/bin/gradle cucumber" }
         }
         catch (Exception error) {
             println("Tests failed.")

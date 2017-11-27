@@ -1,11 +1,11 @@
 #!groovy
 
-node {
+node ('EPBYMINW2468'){
     def gradle = tool "gradle3.3"
     env.PATH = "${gradle}/bin:${env.PATH}"
     def BRANCH_NAME = 'abandarovich'
     def JAR = "build/libs/gradle-simple.jar"
-    def CHILD_JOB = "MNTLAB-abandarovich-child1-build-job"
+    def CHILD_JOB = "EPBYMINW2468/MNTLAB-abandarovich-child1-build-job"
     def ARTIFACT = "pipeline-abandarovich-${BUILD_NUMBER}.tar.gz"
     def CHILD_ARTIFACT = "*dsl_script.tar.gz"
     try {

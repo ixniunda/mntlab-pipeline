@@ -82,3 +82,27 @@ stage('Triggering seed job'){
         }
     }
 }
+
+stage('Packaging and Publishing results') {
+    node {
+  stage_name='Packaging and Publishing results'
+        unstash 'artifact'
+        sh "tar -cvf pipeline-${student}-${BUILD_NUMBER}.tar.gz $artifactID $path_to_jar $path_to_jenkinsfile"
+        archive 'pipeline-${student}-${BUILD_NUMBER}.tar.gz'
+        try {
+            checkout([$class: 'GitSCM', branches: [[name: "*/$student"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/groovy-scripts.git']]])
+        } catch (Exception ERROR) {
+            stage_result = fail
+            message = "Stage name:" + stage_name + ".Error:" + ERROR.message
+            send_mail(message)
+        }
+        sh 'mkdir ./tmp'
+        sh "tar -xf pipeline-${student}-${BUILD_NUMBER}.tar.gz -C ./tmp"
+        try {
+            sh "curl -v -u nexus-service-user:deploy --upload-file ./tmp/$path_to_jar http://EPBYMINW1969:8081/repository/project-releases/pipeline-${student}/gradle-simple/${BUILD_NUMBER}/gradle-simple-${BUILD_NUMBER}.jar"
+        } catch (Exception ERROR) {
+    handle_exception(ERROR)
+        } finally {
+            stage_result = success
+        }
+    }

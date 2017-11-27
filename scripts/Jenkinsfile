@@ -1,35 +1,24 @@
-node {
-    stage('Preparation (Checking out)') {
-        sh 'make'
-    }
+// import modules
+import hudson.plugins.git.*
 
-    stage('Building code') {
-        sh
-       
-    }
+// parameters
+def workstation="EPBYMINW1969"
+def student="kzalialetdzinau"
+def project="MNTLAB-${student}-slave1-build-job"
+def artifactID="${student}_dsl_script.tar.gz"
 
-    stage('Testing code') {
-       
-    }
+// paths
+def path_to_file="workspace/$workstation/$project"
+def path_to_jar="build/libs/gradle-simple.jar"
+def path_to_jenkinsfile="scripts/Jenkinsfile"
 
-    stage('Triggering job and fetching artefact after finishing') {
-           
-        }
+// status
+success='SUCCESS'
+fail='FAILURE'
+stage_result=success
 
-    stage('Packaging and Publishing results') {
-           
-        }
-
-    stage('Asking for manual approval') {
-       
-    }
-
-    stage('Deployment') {
-       
-    }
-
-    stage('Sending status') {
-       
-    }
-
+// slack notification 
+def send_to_slack (slack_message){
+    sh 'curl -X POST -H \'Content-type: application/json\' --data \'{\"text\":\"${slack_message}\"}\' https://hooks.slack.com/services/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'
 }
+

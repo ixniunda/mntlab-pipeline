@@ -77,18 +77,20 @@ node () {
            }
       }
 
-      // stage('Packaging and Publishing results') {
-      //
-      //      try {
-      //
-      //      }
-      //
-      //      catch (e) {
-      //         notifySlack('FAILED', "```stage: ${stage}```")
-      //         throw e
-      //      }
-      // }
-      //
+      stage('Packaging and Publishing results') {
+
+           try {
+             sh "tar -cvzf pipeline-adudko-'$BUILD_NUMBER'.tar.gz dsl.groovy Jenkinsfile build/libs/gradle-simple.jar"
+             archiveArtifacts 'pipeline-adudko-${BUILD_NUMBER}.tar.gz'
+             sh "curl -v --user 'admin:admin123' --upload-file './pipeline-adudko-${BUILD_NUMBER}.tar.gz' 'http://nexus/repository/project-releases/asd/name2-2/2/name2-2-2.tar.gz'"
+           }
+
+           catch (e) {
+              notifySlack('FAILED', "```stage: ${stage}```")
+              throw e
+           }
+      }
+
       // stage('Asking for manual approva') {
       //
       //      try {

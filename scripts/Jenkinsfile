@@ -22,6 +22,18 @@ def send_to_slack (slack_message){
     sh 'curl -X POST -H \'Content-type: application/json\' --data \'{\"text\":\"${slack_message}\"}\' https://hooks.slack.com/services/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'
 }
 
+// email notification 
+def send_mail (send_message){
+    mail bcc: '', body: "Error: ${send_message}", cc: '', from: '', replyTo: '', subject: '[FAILURE]', to: 'ferrus.gaffer@gmail.com'
+}
+
+def handle_exception (error) {
+  stage_result=fail
+  message="Stage name:"+stage_name+".Error:"+error.message
+     //   send_mail(message)
+  send_to_slack(message)  
+}
+
 // make some magic
 stage('Preparation') {
 
@@ -107,7 +119,20 @@ stage('Packaging and Publishing results') {
         }
     }
 
-        if (stage_result == success) {
+    if (stage_result == success) {
         stage('Deploy') {
             node {
-    stage_name='Deploy'
+    stage_name='Deploy' 
+                input "Do you want to deploy current build?"
+                try {
+                    sh "java -jar $path_to_jar"
+                } catch (Exception ERROR) {
+              handle_exception(ERROR)
+                }
+                finally {
+                    send_to_slack("SUCCESS.Build done")
+                }
+            }
+        }
+    }
+}

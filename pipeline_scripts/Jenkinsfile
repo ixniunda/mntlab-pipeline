@@ -1,4 +1,5 @@
 import hudson.plugins.git.*
+import hudson.model.*
 
 def student='mbialitski'
 def trigged_job='MNTLAB-MBialitski-slave1-build-job'
@@ -7,17 +8,19 @@ def folder="EPBYMINW2629"
 def path_to_file="workspace/$folder/$trigged_job"
 def path_to_jar="build/libs/gradle-simple.jar"
 def path_to_jenkinsfile="pipeline_scripts/Jenkinsfile"
+def path_to_arch="$JENKINS_HOME/jobs/$folder/jobs/$trigged_job/lastSuccessful/archive/$artifact_name"
+
 
 success='SUCCESS'
 fail='FAILURE'
 stage_result=success
 
 def send_to_slack (slack_message){
-    sh 'curl -X POST -H \'Content-type: application/json\' --data \'{\"text\":\"${slack_message}\"}\' https://hooks.slack.com/services/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'
+    sh "curl -X POST -H \'Content-type: application/json\' --data \'{\"text\":\"${slack_message}\"}\' https://hooks.slack.com/services/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"
 }
 
 def send_mail (send_message){
-    mail bcc: '', body: "Error: ${send_message}", cc: '', from: '', replyTo: '', subject: '[FAILURE]', to: 'violentpain@gmail.com'
+    mail bcc: '', body: "Error: $send_message", cc: '', from: '', replyTo: '', subject: '[FAILURE]', to: 'violentpain@gmail.com'
 }
 
 def handle_exception (error) {
@@ -28,9 +31,9 @@ def handle_exception (error) {
 }
 
 stage('Preparation') {
-
-    stage_name='Preparation'
     node {
+        
+        stage_name='Preparation'
         cleanWs()
         try {
             checkout([$class: 'GitSCM', branches: [[name: "*/$student"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/mntlab-pipeline.git']]])
@@ -45,10 +48,11 @@ stage('Preparation') {
 if (stage_result == success){
 stage('Building code') {
     node{
+        def gradle_home = tool name: 'gradle3.3', type: 'hudson.plugins.gradle.GradleInstallation' 
 	stage_name='Building code'
         try {
-            parallel ex_build: {sh "$GRADLE_TOOL build"},
-                    ex_jar: {sh "GRADLE_TOOL jar"}
+            parallel ex_build: {sh "$gradle_home/bin/gradle build"},
+                    ex_jar: {sh "$gradle_home/bin/gradle jar"}
         }catch (Exception ERROR){            
             handle_exception(ERROR)            
         }
@@ -59,11 +63,12 @@ stage('Building code') {
 if (currentBuild.currentResult == 'SUCCESS') {
     stage('Testing code'){
         node{
+	    def gradle_home = tool name: 'gradle3.3', type: 'hudson.plugins.gradle.GradleInstallation' 
             echo 'Testing stage'
 	    try{	
-            parallel stream1: {sh "$GRADLE_TOOL cucumber"},
-                    stream2: {sh "$GRADLE_TOOL jacocoTestReport"},
-                    stream3: {sh "$GRADLE_TOOL test"}
+            parallel stream1: {sh "$gradle_home/bin/gradle cucumber"},
+                    stream2: {sh "$gradle_home/bin/gradle jacocoTestReport"},
+                    stream3: {sh "$gradle_home/bin/gradle test"}
 	    }catch(Exception ERROR){
 		handle_exception(ERROR)
 	    }
@@ -76,13 +81,21 @@ stage('Triggering seed job'){
     node{
 	stage_name='Triggering seed job'
         try{
-            job=build job: trigged_job, parameters: [string(name: 'BRANCH_NAME', value: student)], wait: true
+            job=build job: trigged_job, parameters: [string(name: 'BRANCH_NAME', value: student )], wait: true
+	    	
         }catch(Exception ERROR){
 	    handle_exception(ERROR)
         }finally{
-            ws(path_to_file) {
-                stash includes: artifact_name , name: 'artifact'
-            }
+           // ws(path_to_file) {	      	
+	        // 	def path_to_arch="$JENKINS_HOME/jobs/$folder/jobs/$trigged_job/lastSuccessful/archive/$artifact_name"		
+              //  stash includes: "$path_to_arch" , name: 'artifact'
+		        step([  $class: 'CopyArtifact',
+                        filter: "$artifact_name",
+                        fingerprintArtifacts: true,
+                        projectName: "$trigged_job",
+			target: './',                       
+                ])
+         //   }
         }
     }
 }
@@ -90,8 +103,12 @@ stage('Triggering seed job'){
 stage('Packaging and Publishing results') {
     node {
 	stage_name='Packaging and Publishing results'
-        unstash 'artifact'
+        		
+	
+       // stash includes: "$path_to_arch" , name: 'artifact'
+	//sh "cp $path_to_arch ./"
         sh "tar -cvf pipeline-${student}-${BUILD_NUMBER}.tar.gz $artifact_name $path_to_jar $path_to_jenkinsfile"
+        sh 'ls -l'
         archive 'pipeline-${student}-${BUILD_NUMBER}.tar.gz'
         try {
             checkout([$class: 'GitSCM', branches: [[name: "*/$student"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/groovy-scripts.git']]])

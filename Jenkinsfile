@@ -55,6 +55,7 @@ node('EPBYMINW2468') {
             build job: CHILD_JOB, parameters: [
                     [$class: 'StringParameterValue', name: 'BRANCH_NAME', value: 'abandarovich']
             ], wait: true
+	    copyArtifacts(projectName: CHILD_JOB, filter: CHILD_ARTIFACT)
         }
     }
     catch (Exception ex) {
@@ -63,7 +64,6 @@ node('EPBYMINW2468') {
     }
     try {
         stage('Package') {
-            copyArtifacts(projectName: CHILD_JOB, filter: '*dsl_script.tar.gz')
             archiveArtifacts 'Jenkinsfile,' + JAR + ',' + CHILD_ARTIFACT
             sh "tar -cvzf " + ARTIFACT + " Jenkinsfile " + CHILD_ARTIFACT
             sh "curl -v --user 'admin:12345678' --upload-file ./" + ARTIFACT + " http://nexus/repository/task11/com.github.jitpack/pipeline-abandarovich/${BUILD_NUMBER}/" + ARTIFACT

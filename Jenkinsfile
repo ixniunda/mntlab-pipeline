@@ -1,6 +1,4 @@
 #!groovy
-import jenkins.model.*;
-System.setProperty("hudson.model.ParametersAction.keepUndefinedParameters", "true")
 
 node('EPBYMINW2468') {
     def gradle = tool "gradle3.3"
@@ -32,19 +30,19 @@ node('EPBYMINW2468') {
     try {
         stage('Test') {
             parallel 'Cucumber Tests': {
-                node('EPBYMINW2466') {
+//                node('EPBYMINW2466') {
                     sh "gradle cucumber"
-                }
+//                }
             },
                     'Jacoco Tests': {
-                        node('EPBYMINW2467') {
+//                        node('EPBYMINW2467') {
                             sh "gradle jacocoTestReport"
-                        }
+//                        }
                     },
                     'Unit Tests': {
-                        node('EPBYMINW2470') {
+//                        node('EPBYMINW2470') {
                             sh "gradle test"
-                        }
+//                        }
                     }
         }
     }
@@ -65,7 +63,7 @@ node('EPBYMINW2468') {
     }
     try {
         stage('Package') {
-            copyArtifacts(projectName: CHILD_JOB, filter: CHILD_ARTIFACT)
+            copyArtifacts(projectName: CHILD_JOB, filter: '*dsl_script.tar.gz')
             archiveArtifacts 'Jenkinsfile,' + JAR + ',' + CHILD_ARTIFACT
             sh "tar -cvzf " + ARTIFACT + " Jenkinsfile " + CHILD_ARTIFACT
             sh "curl -v --user 'admin:12345678' --upload-file ./" + ARTIFACT + " http://nexus/repository/task11/com.github.jitpack/pipeline-abandarovich/${BUILD_NUMBER}/" + ARTIFACT

@@ -1,17 +1,131 @@
+import hudson.plugins.git.*
+
+def student='mbialitski'
+def trigged_job='MNTLAB-MBialitski-slave1-build-job'
+def artifact_name="${student}_dsl_script.tar.gz"
+def folder="EPBYMINW2629"
+def path_to_file="workspace/$trigged_job"
+def path_to_jar="build/libs/gradle-simple.jar"
+def path_to_jenkinsfile="pipeline_scripts/Jenkinsfile"
+
+success='SUCCESS'
+fail='FAILURE'
+stage_result=success
+
+def send_to_slack (slack_message){
+    sh 'curl -X POST -H \'Content-type: application/json\' --data \'{\"text\":\"${slack_message}\"}\' https://hooks.slack.com/services/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'
+}
+
+def send_mail (send_message){
+    mail bcc: '', body: "Error: ${send_message}", cc: '', from: '', replyTo: '', subject: '[FAILURE]', to: 'violentpain@gmail.com'
+}
+
+def handle_exception (error) {
+	stage_result=fail
+	message="Stage name:"+stage_name+".Error:"+error.message
+        send_mail(message)
+	send_to_slack(message)	
+}
+
 stage('Preparation') {
-	node {
-		git url: 'https://github.com/MNT-Lab/mntlab-pipeline.git', branch: 'mbialitski'
-		//def result=checkout(git).GIT_COMMIT	
-	}
+
+    stage_name='Preparation'
+    node {
+        cleanWs()
+        try {
+            checkout([$class: 'GitSCM', branches: [[name: "*/$student"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/mntlab-pipeline.git']]])
+
+        }catch(Exception ERROR){           
+            handle_exception(ERROR)
+            throw ERROR
+        }
+    }
 }
+
+if (stage_result == success){
 stage('Building code') {
-	node{
-		gradle build
-	}
+    node{
+	stage_name='Building code'
+        try {
+            parallel ex_build: {sh 'gradle build'},
+                    ex_jar: {sh 'gradle jar'}
+        }catch (Exception ERROR){            
+            handle_exception(ERROR)            
+        }
+    }
 }
-stage('Testing code'){
-	node{
-	echo 'Testing stage'
-	}
 }
-//stage('')
+
+if (currentBuild.currentResult == 'SUCCESS') {
+    stage('Testing code'){
+        node{
+            echo 'Testing stage'
+	    try{	
+            parallel stream1: {sh 'gradle cucumber'},
+                    stream2: {sh 'gradle jacocoTestReport'},
+                    stream3: {sh 'gradle test'}
+	    }catch(Exception ERROR){
+		handle_exception(ERROR)
+	    }
+
+        }
+    }
+}
+
+
+stage('Triggering seed job'){
+    node{
+	stage_name='Triggering seed job'
+        try{
+            job=build job: trigged_job, parameters: [string(name: 'BRANCH_NAME', value: student)], wait: true
+        }catch(Exception ERROR){
+	    handle_exception(ERROR)
+        }finally{
+            ws(path_to_file) {
+                stash includes: artifact_name , name: 'artifact'
+            }
+        }
+    }
+}
+
+stage('Packaging and Publishing results') {
+    node {
+	stage_name='Packaging and Publishing results'
+        unstash 'artifact'
+        sh "tar -cvf pipeline-${student}-${BUILD_NUMBER}.tar.gz $artifact_name $path_to_jar $path_to_jenkinsfile"
+        archive 'pipeline-${student}-${BUILD_NUMBER}.tar.gz'
+        try {
+            checkout([$class: 'GitSCM', branches: [[name: "*/$student"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/groovy-scripts.git']]])
+        } catch (Exception ERROR) {
+            stage_result = fail
+            message = "Stage name:" + stage_name + ".Error:" + ERROR.message
+            send_mail(message)
+        }
+        sh 'mkdir ./tmp'
+        sh "tar -xf pipeline-${student}-${BUILD_NUMBER}.tar.gz -C ./tmp"
+        try {
+            sh "curl -v -u jenkins:jenkins --upload-file ./tmp/$path_to_jar http://EPBYMINW2629:8081/repository/task11/pipeline-${student}/gradle-simple/${BUILD_NUMBER}/gradle-simple-${BUILD_NUMBER}.jar"
+        } catch (Exception ERROR) {
+		handle_exception(ERROR)
+        } finally {
+            stage_result = success
+        }
+    }
+
+    if (stage_result == success) {
+        stage('Deploy') {
+            node {
+		stage_name='Deploy'	
+                input "Deploy ...?"
+                try {
+                    sh "java -jar $path_to_jar"
+                } catch (Exception ERROR) {
+			        handle_exception(ERROR)
+                }
+                finally {
+                    send_to_slack("SUCCESS.Build done")
+                }
+            }
+        }
+    }
+}

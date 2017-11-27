@@ -1,3 +1,4 @@
+
 node('EPBYMINW6405'){
 def grdHome = tool 'gradle3.3'
 def javaHome = tool 'java8'
@@ -26,7 +27,7 @@ def javaHome = tool 'java8'
     try{
     stage('Trigger Job'){
         build job: 'EPBYMINW6405/MNTLAB-ataran-child1-build-job', parameters: [string(name: 'BRANCH_NAME', value: ''), string(name: 'BRANCH_NAME', value: 'ataran')],propagate: true, wait: true
-        sh "cp -f $JENKINS_HOME/workspace/MNTLAB-ataran-child1-build-job/ataran_dsl_script.tar.gz $JENKINS_HOME/workspace/pipeline_job/"
+        copyArtifacts filter: 'ataran_dsl_script.tar.gz', fingerprintArtifacts: true, projectName: 'EPBYMINW6405/MNTLAB-ataran-child1-build-job', target: '.'
     }
     } catch(err){echo "Tests fails.";currentBuild.result = 'FAILURE'}
     try{

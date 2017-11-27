@@ -5,6 +5,7 @@
 node {
     def repositoryUrl = "https://github.com/MNT-Lab/mntlab-pipeline.git"
     def branch = "ilakhtenkov"
+    def GRADLE_HOME = tool name: 'gradle3.3', type: 'hudson.plugins.gradle.GradleInstallation'
 
     stage('PREPARATION') {
         try {
@@ -12,37 +13,31 @@ node {
             git branch: branch, url: repositoryUrl
         }
         catch (Exception error){
-            def content = '{"text": "Test message", "channel": "#general", "link_names": 1, "username": "ilakhtenkov-jenkins", "icon_emoji": ":jenkins_ci:"}'
-            def message = "BUILD Failed"
-            sh "curl -X POST --data-urlencode \\\"payload={\\\"channel\\\": \\\"${channel}\\\", \"username\": \"${userName}\", \"text\": \"${message}\", \"icon_emoji\": \":chicken:\"}\" ${webhookUrl}"
+            println ("PREPARATION Failed")
             throw error
         }
     }
     stage('BUILD') {
         try {
-            sh "gradle clean build"
+            sh "${GRADLE_HOME}/gradle clean build"
         }
         catch (Exception error){
-            //println("BUILD Failed")
-            def message = "BUILD Failed"
-            sh "curl -X POST --data-urlencode \"payload={\"channel\": \"${channel}\", \"username\": \"${userName}\", \"text\": \"${message}\", \"icon_emoji\": \":chicken:\"}\" ${webhookUrl}"
+            println("BUILD Failed")
             throw error
         }
     }
     stage('TEST') {
         try {
             parallel junitTest: {
-                sh "gradle test"
+                sh "${GRADLE_HOME}/gradle test"
             }, jacocoTest: {
-                sh "gradle jacocoTestReport"
+                sh "${GRADLE_HOME}/gradle jacocoTestReport"
             }, cucumberTest: {
-                sh "gradle cucumber"
+                sh "${GRADLE_HOME}/gradle cucumber"
             }
         }
         catch (Exception error){
-            //println("TEST Failed")
-            def message = "TEST Failed"
-            sh "curl -X POST --data-urlencode \"payload={\"channel\": \"${channel}\", \"username\": \"${userName}\", \"text\": \"${message}\", \"icon_emoji\": \":chicken:\"}\" ${webhookUrl}"
+            println("TEST Failed")
             throw error
         }
     }
@@ -52,9 +47,7 @@ node {
             copyArtifacts(projectName: 'EPBYMINW2033/MNTLAB-ilakhtenkov-child1-build-job', filter: '*_dsl_script.tar.gz')
         }
         catch (Exception error){
-            //println("TRIGGER-CHILD Failed")
-            def message = "TRIGGER-CHILD Failed"
-            sh "curl -X POST --data-urlencode \"payload={\"channel\": \"${channel}\", \"username\": \"${userName}\", \"text\": \"${message}\", \"icon_emoji\": \":chicken:\"}\" ${webhookUrl}"
+            println("TRIGGER-CHILD Failed")
             throw error
         }
     }
@@ -67,9 +60,7 @@ node {
             sh "curl -v --user 'jenkins:jenkins' --upload-file './pipeline-${branch}-${env.BUILD_NUMBER}.tar.gz' 'http://nexus.local/repository/Artifact_storage/com/epam/mntlab/pipeline/gradle-simple-${env.BUILD_NUMBER}/${env.BUILD_NUMBER}/gradle-simple-${env.BUILD_NUMBER}-${env.BUILD_NUMBER}.tar.gz'"
         }
         catch (Exception error){
-            //println("PUBLISHING-RESULTS Failed")
-            def message = "PUBLISHING-RESULTS Failed"
-            sh "curl -X POST --data-urlencode \"payload={\"channel\": \"${channel}\", \"username\": \"${userName}\", \"text\": \"${message}\", \"icon_emoji\": \":chicken:\"}\" ${webhookUrl}"
+            println("PUBLISHING-RESULTS Failed")
             throw error
         }
     }
@@ -78,9 +69,7 @@ node {
             input message: 'Do you want to deploy?', ok: 'Yes'
         }
         catch (Exception error){
-            //println("APPROVAL Failed")
-            def message = "APPROVAL Failed"
-            sh "curl -X POST --data-urlencode \"payload={\"channel\": \"${channel}\", \"username\": \"${userName}\", \"text\": \"${message}\", \"icon_emoji\": \":chicken:\"}\" ${webhookUrl}"
+            println("APPROVAL Failed")
             throw error
         }
     }
@@ -89,9 +78,7 @@ node {
             sh "java -jar build/libs/gradle-simple.jar"
             }
         catch (Exception error){
-            //println("DEPLOYING Failed")
-            def message = "DEPLOYING Failed"
-            sh "curl -X POST --data-urlencode \"payload={\"channel\": \"${channel}\", \"username\": \"${userName}\", \"text\": \"${message}\", \"icon_emoji\": \":chicken:\"}\" ${webhookUrl}"
+            println("DEPLOYING Failed")
             throw error
         }
     }
@@ -102,9 +89,7 @@ node {
 }
 def postToSlack (String message, String channel, String userName) {
     def webhookUrl = "https://hooks.slack.com/services/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"
-    def GRADLE_HOME = tool name: 'gradle3.3', type: 'hudson.plugins.gradle.GradleInstallation'
-    sh "echo $GRADLE_HOME"
-    sh "curl -X POST --data-urlencode \\\"payload={\\\"channel\\\": \\\"${channel}\\\", \\\"username\\\": \\\"${userName}\\\", \\\"text\\\": \\\"${message}\\\", \\\"icon_emoji\\\": \\\":chicken:\\\"}\\\" \\\"${webhookUrl}\\\""
+    sh "curl -X POST --data-urlencode 'payload={\\\"channel\\\": \\\"${channel}\\\", \\\"username\\\": \\\"${userName}\\\", \\\"text\\\": \\\"${message}\\\", \\\"icon_emoji\\\": \\\":chicken:\\\"}' \\\"${webhookUrl}\\\""
 }
 
 

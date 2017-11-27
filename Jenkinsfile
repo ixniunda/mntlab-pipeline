@@ -21,12 +21,10 @@ node {
     }
     stage ('Packaging and Publishing') {
         sh ("cp /home/jenkins/.jenkins/workspace/MNTLAB-kshchura-child1-build-job/dsl_main.groovy .")
-        sh ("cp build/libs/gradle-simple.jar .")
+        sh ("cp build/libs/garadle-simple.jar .")
         sh ("tar -czvf pipeline-kshchura-${BUILD_NUMBER}.tar.gz dsl_main.groovy gradle-simple.jar Jenkinsfile")
         sh ("curl -v -u admin:admin123 --upload-file pipeline-kshchura-${BUILD_NUMBER}.tar.gz  http://172.28.128.9:8081/repository/artifacts/pipeline-kshchura-${BUILD_NUMBER}.tar.gz")
+        archiveArtifacts "pipeline-kshchura-${BUILD_NUMBER}.tar.gz"
     }
 
 }
-
-
-

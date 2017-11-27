@@ -1,4 +1,4 @@
-node {
+node ('EPBYMINW3093') {
     stage ('GIT chackout') {
         git([url: 'https://github.com/MNT-Lab/mntlab-pipeline.git', branch: 'kshchura'])
     }
@@ -29,7 +29,7 @@ node {
     stage ('child1 JOB') {
         try {
         build job: 'MNTLAB-kshchura-child1-build-job', parameters: [string(name: 'BRANCH', value: 'kshchura')]
-        sh "cp /home/jenkins/.jenkins/workspace/MNTLAB-kshchura-child1-build-job/kshchura_dsl_script.tar.gz /home/jenkins/.jenkins/workspace/T11/"
+        sh "cp ../MNTLAB-kshchura-child1-build-job/kshchura_dsl_script.tar.gz ."
 
         } catch (err) {
             println "FAILURE on child1 JOB1 stage"
@@ -38,7 +38,7 @@ node {
     }
     stage ('Packaging and Publishing') {
         try {
-        sh ("cp /home/jenkins/.jenkins/workspace/MNTLAB-kshchura-child1-build-job/dsl_main.groovy .")
+        sh ("cp ../MNTLAB-kshchura-child1-build-job/dsl_main.groovy .")
 
         sh ("cp build/libs/gradle-simple.jar .")
         sh ("tar -czvf pipeline-kshchura-${BUILD_NUMBER}.tar.gz dsl_main.groovy gradle-simple.jar Jenkinsfile")
@@ -65,12 +65,4 @@ node {
             throw err
         }
     }
-//    echo "122222222222222222222"
-    //  echo "${result}"
-//    echo "Caught: ${err}"
-    //  echo "${currentBuild.result}"
-    //echo "${currentBuild.displayName}"
-//    echo "${currentBuild.currentResult}"
-    //   currentBuild.result = 'FAILURE'
-
 }

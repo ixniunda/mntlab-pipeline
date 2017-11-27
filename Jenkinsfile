@@ -6,7 +6,6 @@ def colors = [
     'SUCCESSFUL': 'good'
 ]
 slackSend(
-    teamDomain: 'Rupert-',
     channel: '#jenkins-kadiara',
     tokenCredentialId: 'xoxp-277200285029-277282124433-277286186065-99d789f1583cb1fe3e0c423486a14443',
     color: colors[status],
@@ -14,14 +13,14 @@ slackSend(
 )
 }
 
-node () {
+node ('EPBYMINW2472') {
 
-  def GRADLE_HOME="${tool 'gradle 4.3'}"
+    def GRADLE_HOME="${tool 'gradle 4.3'}"
 
-  environment {
-    env.JAVA_HOME="${tool 'jdk-8u51'}"
-    env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
-  }
+    environment {
+      env.JAVA_HOME="${tool 'jdk-8u51'}"
+      env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
+    }
 
 
   	 stage('Preparation') {
@@ -79,7 +78,7 @@ node () {
            }
       }
 
-      stage('Packaging and Publishing results') {
+     stage('Packaging and Publishing results') {
 
            try {
              sh "tar -cvzf pipeline-adudko-'$BUILD_NUMBER'.tar.gz  Jenkinsfile build/libs/gradle-simple.jar"

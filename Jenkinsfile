@@ -1,4 +1,3 @@
-
 node {
     def gradleHome
     gradleHome = tool 'gradle3.3'
@@ -14,6 +13,10 @@ node {
         sh "gradle build"
    }
    stage ('Testing code'){
-       
+       parallel(
+          cucumber:{ sh "gradle cucumber"},
+          jacocoTestReport:{ sh "gradle jacocoTestReport"},
+          test:{ sh "gradle test"}
+       )
    }
 }

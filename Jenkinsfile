@@ -54,7 +54,7 @@ node {
         try {
             sh "tar -xvzf artifact-dsl-${BUILD_NUMBER}.tar.gz"
             sh "tar -czvf pipeline-${confBranch}-${BUILD_NUMBER}.tar.gz ./dsl.groovy ./Jenkinsfile ./build/libs/gradle-simple.jar"
-            sh "curl -v -u jenkins:jenkins --upload-file ./pipeline-${confBranch}-${BUILD_NUMBER}.tar.gz http://epbyminw3088:8081/repository/maven-custom"
+            sh "curl -v -u jenkins:jenkins --upload-file ./pipeline-${confBranch}-${BUILD_NUMBER}.tar.gz http://epbyminw3088:8081/repository/maven-custom/com.mnt.pipeline/pipeline-${confBranch}-${BUILD_NUMBER}.tar.gz"
         }
         catch (Exception error) {
             println("Publishing failed.")

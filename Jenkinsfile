@@ -41,7 +41,7 @@ node {
     stage("ChildJob") {
         try {
             build job: confJob,
-                parameters: [[$class: 'StringParameterValue', name: 'BRANCH_NAME', value: confBranch], [$class: 'StringParameterValue', name: 'BUILD_NUMBER', value: "${BUILD_NUMBER}"]],
+                parameters: [[$class: 'StringParameterValue', name: 'BRANCH_NAME', value: confBranch], [$class: 'StringParameterValue', name: 'PARENT_NUMBER', value: "${BUILD_NUMBER}"]],
                 wait: true
             copyArtifacts(projectName: confJob, filter: "*-dsl-${BUILD_NUMBER}.tar.gz")
         }

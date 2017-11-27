@@ -51,3 +51,19 @@ stage('Building code') {
     }
 }
 }
+
+if (currentBuild.currentResult == 'SUCCESS') {
+    stage('Testing code'){
+        node{
+            echo 'Testing stage'
+      try{  
+            parallel stream1: {sh "$GRADLE_TOOL cucumber"},
+                     stream2: {sh "$GRADLE_TOOL jacocoTestReport"},
+                     stream3: {sh "$GRADLE_TOOL test"}
+      }catch(Exception ERROR){
+    handle_exception(ERROR)
+      }
+
+        }
+    }
+}

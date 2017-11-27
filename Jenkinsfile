@@ -1,4 +1,6 @@
 #!groovy
+import jenkins.model.*;
+System.setProperty("hudson.model.ParametersAction.keepUndefinedParameters", "true")
 
 node('EPBYMINW2468') {
     def gradle = tool "gradle3.3"

@@ -1,5 +1,5 @@
 node {
-    notifyStarted()
+   // notifyStarted()
 
     def gradle_home = tool 'gradle3.3'
     def branch_name = 'ivauchok'
@@ -35,10 +35,10 @@ node {
         sh "java -jar gradle-simple.jar"
     }
     stage('Sending status') {
-        notifySuccessful()
+       // notifySuccessful()
     }
 }
-
+/*
 def notifyStarted() {
     slackSend (color: '#FFFF00', message: "STARTED: Job '${JOB_NAME} [${BUILD_NUMBER}]' (${BUILD_URL})")
 }
@@ -46,3 +46,4 @@ def notifyStarted() {
 def notifySuccessful() {
     slackSend (color: '#00FF00', message: "SUCCESSFUL: Job '${JOB_NAME} [${BUILD_NUMBER}]' (${BUILD_URL})")
 }
+*/

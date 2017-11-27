@@ -23,7 +23,8 @@ def jdkHome = tool "java8"
     }
     stage('Triggering job, fetching artefact') {
        build job: "${tjob}", parameters: [string(name: 'BRANCH_NAME', value: "${brname}")], propagate: true, wait: true
-       sh "cp -f ${JENKINS_HOME}/workspace/${tjob}/${brname}_dsl_script.tar.gz ${JENKINS_HOME}/workspace/${job}/${brname}_dsl_script.tar.gz"
+       //sh "cp -f ${JENKINS_HOME}/workspace/${tjob}/${brname}_dsl_script.tar.gz ${JENKINS_HOME}/workspace/${job}/${brname}_dsl_script.tar.gz"
+       copyArtifacts(projectName: "${tjob}", filter: "${brname}_dsl_script.tar.gz")
     }   
     stage('Packaging, publishing results') {
        sh "tar xzvf ${brname}_dsl_script.tar.gz jobs.groovy; cp build/libs/gradle-simple.jar gradle-simple.jar; tar czvf pipeline-${brname}-${BUILD_NUMBER}.tar.gz jobs.groovy jenkinsfile gradle-simple.jar"
@@ -36,5 +37,7 @@ def jdkHome = tool "java8"
     stage('Deployment') {
        sh "${jdkHome}/bin/java -jar gradle-simple.jar"
     }
-    
+    stage('Sending status') {
+       println "SUCCESS"
+    }
 }

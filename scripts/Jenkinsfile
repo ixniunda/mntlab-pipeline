@@ -1,3 +1,7 @@
+// modules
+import hudson.plugins.git.*
+import hudson.model.*
+
 // environment
 def GRADLE_HOME = tool "gradle3.3"
 

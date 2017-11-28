@@ -1,138 +1,82 @@
-// import modules
-import hudson.plugins.git.*
+// environment
+def GRADLE_HOME = tool "gradle3.3"
 
 // parameters
 def workstation="EPBYMINW1969"
-def student="kzalialetdzinau"
-def project="MNTLAB-${student}-slave1-build-job"
+def student="kzalialetdzinau"             
+def project="MNTLAB-${student}-child1-build-job"  ${project}
 def artifactID="${student}_dsl_script.tar.gz"
 
-// paths
-def path_to_file="workspace/$workstation/$project"
-def path_to_jar="build/libs/gradle-simple.jar"
-def path_to_jenkinsfile="scripts/Jenkinsfile"
-
-// status
-success='SUCCESS'
-fail='FAILURE'
-stage_result=success
-
-// slack notification 
-def send_to_slack (slack_message){
-    sh 'curl -X POST -H \'Content-type: application/json\' --data \'{\"text\":\"${slack_message}\"}\' https://hooks.slack.com/services/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'
-}
-
-// email notification 
-def send_mail (send_message){
-    mail bcc: '', body: "Error: ${send_message}", cc: '', from: '', replyTo: '', subject: '[FAILURE]', to: 'ferrus.gaffer@gmail.com'
-}
-
-def handle_exception (error) {
-  stage_result=fail
-  message="Stage name:"+stage_name+".Error:"+error.message
-     //   send_mail(message)
-  send_to_slack(message)  
-}
+node ('${workstation}') {
 
 // make some magic
-stage('Preparation') {
-
-    stage_name='Preparation'
-    node {
-        cleanWs()
-        try {
-            checkout([$class: 'GitSCM', branches: [[name: "*/$student"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/mntlab-pipeline.git']]])
-
-        }catch(Exception ERROR){           
-            handle_exception(ERROR)
-            throw ERROR
-        }
-    }
-}
-
-if (stage_result == success){
-stage('Building code') {
-    node{
-  stage_name='Building code'
-        try {
-            parallel ex_build: {sh "$GRADLE_TOOL build"},
-                    ex_jar: {sh "GRADLE_TOOL jar"}
-        }catch (Exception ERROR){            
-            handle_exception(ERROR)            
-        }
-    }
-}
-}
-
-if (currentBuild.currentResult == 'SUCCESS') {
-    stage('Testing code'){
-        node{
-            echo 'Testing stage'
-      try{  
-            parallel stream1: {sh "$GRADLE_TOOL cucumber"},
-                     stream2: {sh "$GRADLE_TOOL jacocoTestReport"},
-                     stream3: {sh "$GRADLE_TOOL test"}
-      }catch(Exception ERROR){
-    handle_exception(ERROR)
-      }
-
-        }
-    }
-}
-
-stage('Triggering seed job'){
-    node{
-  stage_name='Triggering seed job'
-        try{
-            job=build job: trigged_job, parameters: [string(name: 'BRANCH_NAME', value: student)], wait: true
-        }catch(Exception ERROR){
-      handle_exception(ERROR)
-        }finally{
-            ws(path_to_file) {
-                stash includes: artifactID , name: 'artifact'
-            }
-        }
-    }
-}
-
-stage('Packaging and Publishing results') {
-    node {
-  stage_name='Packaging and Publishing results'
-        unstash 'artifact'
-        sh "tar -cvf pipeline-${student}-${BUILD_NUMBER}.tar.gz $artifactID $path_to_jar $path_to_jenkinsfile"
-        archive 'pipeline-${student}-${BUILD_NUMBER}.tar.gz'
-        try {
-            checkout([$class: 'GitSCM', branches: [[name: "*/$student"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/groovy-scripts.git']]])
-        } catch (Exception ERROR) {
-            stage_result = fail
-            message = "Stage name:" + stage_name + ".Error:" + ERROR.message
-            send_mail(message)
-        }
-        sh 'mkdir ./tmp'
-        sh "tar -xf pipeline-${student}-${BUILD_NUMBER}.tar.gz -C ./tmp"
-        try {
-            sh "curl -v -u nexus-service-user:deploy --upload-file ./tmp/$path_to_jar http://EPBYMINW1969:8081/repository/project-releases/pipeline-${student}/gradle-simple/${BUILD_NUMBER}/gradle-simple-${BUILD_NUMBER}.jar"
-        } catch (Exception ERROR) {
-    handle_exception(ERROR)
-        } finally {
-            stage_result = success
-        }
-    }
-
-    if (stage_result == success) {
-        stage('Deploy') {
-            node {
-    stage_name='Deploy' 
-                input "Do you want to deploy current build?"
-                try {
-                    sh "java -jar $path_to_jar"
-                } catch (Exception ERROR) {
-              handle_exception(ERROR)
-                }
-                finally {
-                    send_to_slack("SUCCESS.Build done")
-                }
-            }
-        }
-    }
+    // Get code from a GitHub 
+   try{
+   stage('Preparation') { 
+      checkout([$class: 'GitSCM', branches: [[name: '*/${student}']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/mntlab-pipeline.git']]])
+   } } catch (Exception err){
+       sh """curl -X POST -H 'Content-type: application/json' --data '{"text":"Pipeline FAILED at Preparation step"}' https://hooks.slack.com/services/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"""
+   }
+   
+   try{
+   stage('Build') {
+      // Run the gradle build
+      sh "'${GRADLE_HOME}/bin/gradle' build"
+   } } catch (Exception err){
+       sh """curl -X POST -H 'Content-type: application/json' --data '{"text":"Pipeline FAILED at Build step"}' https://hooks.slack.com/services/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"""
+   }
+   
+   try{
+   stage('Testing Code') {
+       parallel (
+           cucumber: {
+               sh "'${GRADLE_HOME}/bin/gradle' cucumber"
+           },
+           jacoco: {
+               sh "'${GRADLE_HOME}/bin/gradle' jacocoTestReport"
+           },
+           unit: {
+               sh "'${GRADLE_HOME}/bin/gradle' test"
+           }
+       )
+   } } catch (Exception err){
+       sh """curl -X POST -H 'Content-type: application/json' --data '{"text":"Pipeline FAILED at Testing Code step"}' https://hooks.slack.com/services/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"""
+   }
+   
+   try{
+   stage('Triggering job and fetching artefact after finishing') {
+        build job: '${project}', parameters: [string(name: 'BRANCH_NAME', value: '${student}')]
+        copyArtifacts(projectName: '${workstation}/${project}', filter: '*dsl_script.tar.gz');
+        sh 'tar -xvf ${artifactID}'
+   } } catch (Exception err){
+        sh """curl -X POST -H 'Content-type: application/json' --data '{"text":"Pipeline FAILED at Triggering Other Job step"}' https://hooks.slack.com/services/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"""
+   }
+   
+   try{
+   stage('Packaging and Publishing results') {
+       sh "tar -cvzf pipeline-${student}-'$BUILD_NUMBER'.tar.gz dsl.groovy Jenkinsfile build/libs/gradle-simple.jar"
+       archiveArtifacts 'pipeline-${student}-${BUILD_NUMBER}.tar.gz'
+       sh "/opt/groovy/bin/groovy -DVersionID='$BUILD_NUMBER' nexus.groovy"
+   } } catch (Exception err){
+       sh """curl -X POST -H 'Content-type: application/json' --data '{"text":"Pipeline FAILED at Packaging and Publishing step"}' https://hooks.slack.com/services/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"""
+   }
+   
+   try {
+   stage('Asking for manual approval') {
+       input 'Do you want deploy a project?/Abort'
+   } } catch (Exception err){
+       sh """curl -X POST -H 'Content-type: application/json' --data '{"text":"Pipeline FAILED at Deployment step"}' https://hooks.slack.com/services/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"""
+   }
+   
+   try{
+   stage('Deployment') {
+       sh "java -jar build/libs/gradle-simple.jar"
+   } } catch (Exception err){
+       sh """curl -X POST -H 'Content-type: application/json' --data '{"text":"Pipeline FAILED at Deployment step"}' https://hooks.slack.com/services/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"""
+   }
+   
+   stage('Sending status') {
+       currentBuild.result = 'SUCCESS'
+       sh """curl -X POST -H 'Content-type: application/json' --data '{"text":"Pipeline SUCCEEDED"}' https://hooks.slack.com/services/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"""
+   }    
 }

@@ -36,7 +36,7 @@ def javaHome = tool 'java8'
         rm -rf anavitskaya_dsl_script.tar.gz
         mv -f build/libs/gradle-simple.jar .
         tar -zcf pipeline-anavitskaya-"$BUILD_NUMBER".tar.gz Jenkinsfile groovy_script.groovy gradle-simple.jar   
-        curl -v --user 'admin:admin123' --upload-file pipeline-anavitskaya-$BUILD_NUMBER.tar.gz http://EPBYMINW2466:8081/repository/maven-prod/
+        curl -v --user 'admin:admin123' --upload-file pipeline-anavitskaya-$BUILD_NUMBER.tar.gz http://172.28.128.6/repository/customMavenHosted/
         '''
     }
     } catch(err){echo "Publishing fails.";currentBuild.result = 'FAILURE'}

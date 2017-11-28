@@ -32,10 +32,10 @@ def javaHome = tool 'java8'
     try{
     stage('Publish results'){
         sh '''
-        tar -zxvf anavitskaya_dsl_script.tar.gz groovy_script.groovy
+        tar -zxvf anavitskaya_dsl_script.tar.gz DSL.groovy
         rm -rf anavitskaya_dsl_script.tar.gz
         mv -f build/libs/gradle-simple.jar .
-        tar -zcf pipeline-anavitskaya-"$BUILD_NUMBER".tar.gz Jenkinsfile groovy_script.groovy gradle-simple.jar   
+        tar -zcf pipeline-anavitskaya-"$BUILD_NUMBER".tar.gz Jenkinsfile DSL.groovy gradle-simple.jar   
         curl -v --user 'admin:admin123' --upload-file pipeline-anavitskaya-$BUILD_NUMBER.tar.gz http://172.28.128.6/repository/customMavenHosted/
         '''
     }

@@ -5,14 +5,14 @@ import hudson.model.*
 def student='kzalialetdzinau'
 def folder="EPBYMINW1969"
 def trigged_job='MNTLAB-kzalialetdzinau-child1-build-job'
-def artifact_name="${student}_dsl_script.tar.gz"
+def artifactID="${student}_dsl_script.tar.gz"
 
 
 // paths
 def path_to_file="workspace/$folder/$trigged_job"
 def path_to_jar="build/libs/gradle-simple.jar"
 def path_to_jenkinsfile="scripts/Jenkinsfile"
-def path_to_arch="$JENKINS_HOME/jobs/$folder/jobs/$trigged_job/lastSuccessful/archive/$artifact_name"
+def path_to_arch="$JENKINS_HOME/jobs/$folder/jobs/$trigged_job/lastSuccessful/archive/$artifactID"
 
 // success or not success
 success='SUCCESS'
@@ -88,10 +88,10 @@ stage('Triggering seed job'){
         handle_exception(ERROR)
         }finally{
            // ws(path_to_file) {            
-            //  def path_to_arch="$JENKINS_HOME/jobs/$folder/jobs/$trigged_job/lastSuccessful/archive/$artifact_name"       
+            //  def path_to_arch="$JENKINS_HOME/jobs/$folder/jobs/$trigged_job/lastSuccessful/archive/$artifactID"       
               //  stash includes: "$path_to_arch" , name: 'artifact'
                 step([  $class: 'CopyArtifact',
-                        filter: "$artifact_name",
+                        filter: "$artifactID",
                         fingerprintArtifacts: true,
                         projectName: "$trigged_job",
             target: './',                       
@@ -102,7 +102,7 @@ stage('Triggering seed job'){
 stage('Packaging and Publishing results') {
     
     stage_name='Packaging and Publishing results'
-        sh "tar -cvf pipeline-${student}-${BUILD_NUMBER}.tar.gz $artifact_name $path_to_jar $path_to_jenkinsfile"
+        sh "tar -cvf pipeline-${student}-${BUILD_NUMBER}.tar.gz $artifactID $path_to_jar $path_to_jenkinsfile"
         sh 'ls -l'
         archive 'pipeline-${student}-${BUILD_NUMBER}.tar.gz'
         try {

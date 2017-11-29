@@ -23,20 +23,20 @@ catch(Exception e){
         parallel(
            
            cucumber: { try{sh "'${mvnHome}/bin/gradle' cucumber"} catch(Exception e){
-                echo "build failed"
+                echo "cucumber failed"
         sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text": "cucumber failed"}' hhttps://hooks.slack.com/services/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 '''
     System.exit(1);
             }}
             ,
            
             junit: {try{sh "'${mvnHome}/bin/gradle' test"}catch(Exception e){
-                echo "build failed"
+                echo "junit failed"
         sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text": "junit failed"}' https://hooks.slack.com/services/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 '''
     System.exit(1);
             }},
          
             jacoco: {try{sh "'${mvnHome}/bin/gradle' jacocoTestReport"}catch(Exception e){
-                echo "build failed"
+                echo "jacoco failed"
         sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text": "jacoco failed"}' https://hooks.slack.com/services/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 '''
     System.exit(1);
             }}
@@ -50,7 +50,7 @@ catch(Exception e){
         //sh "cp $JENKINS_HOME/workspace/MNTLAB-uhramovich-child1-build-job/uhramovich_dsl_script.tar.gz $JENKINS_HOME/workspace/pipeline-job/"
     }}
 	catch(Exception e){
-                echo "build failed"
+                
         sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text": "TTriggering job and fetching artefact stage failed"}' https://hooks.slack.com/services/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 '''
     System.exit(1);
             }
@@ -67,7 +67,7 @@ catch(Exception e){
 
     }}
 catch(Exception e){
-                echo "build failed"
+               
         sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text": "Packaging and Publishing stage failed"}' https://hooks.slack.com/services/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 '''
     System.exit(1);
             }
@@ -77,7 +77,7 @@ catch(Exception e){
   input message: 'Do you want to proceed to the Deployment?' 
   }}
 catch(Exception e){
-                echo "build failed"
+               
         sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text": "Deployment approval is declined"}' https://hooks.slack.com/services/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 '''
     System.exit(1);
             }
@@ -86,7 +86,7 @@ catch(Exception e){
       sh "java -jar build/libs/gradle-simple.jar"
   }}
 catch(Exception e){
-                echo "build failed"
+                
         sh  ''' curl -X POST -H 'Content-type: application/json' --data '{"text": "Deployment stage failed"}' https://hooks.slack.com/services/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 '''
     System.exit(1);
             }

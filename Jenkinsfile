@@ -34,7 +34,7 @@ node {
     
     stage ('Packaging and Publishing results') {
         sh 'tar -xvzf dbakulin_dsl_script.tar.gz'
-        sh 'tar -cvzf pipeline-dbakulin-"${BUILD_NUMBER}".tar.gz jobs.groovy  build/libs/gradle-simple.jar '
+        sh 'tar -cvzf pipeline-dbakulin-"${BUILD_NUMBER}".tar.gz jobs.groovy Jenkinsfile build/libs/gradle-simple.jar '
         archiveArtifacts '*.tar.gz'
     }
     
